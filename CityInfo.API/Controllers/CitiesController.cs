@@ -3,17 +3,13 @@
 namespace CityInfo.API.Controllers
 {
     [ApiController]
+    [Route("api/cities")]
     public class CitiesController : ControllerBase
     {
-        [HttpGet("api/cities")]
+        [HttpGet]
         public JsonResult GetCities()
         {
-            return new JsonResult(
-                new List<object>()
-                {
-                    new { id = 1, Name = "New York City" },
-                    new { id = 2, Name = "New Jersey"}
-                });
+            return new JsonResult(CitiesDataStore.Current.Cities);
         }
     }
 }
