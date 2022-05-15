@@ -1,9 +1,14 @@
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddMvc();
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
-app.UseMvc();
+app.UseRouting();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 app.MapGet("/", () => "Hello World!");
 
