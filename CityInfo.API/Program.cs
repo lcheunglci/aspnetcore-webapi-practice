@@ -10,6 +10,8 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllers();
 });
 
+app.UseStatusCodePages();
+
 app.MapGet("/", () => "Hello World!");
 
 app.Run();
