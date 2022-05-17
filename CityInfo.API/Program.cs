@@ -1,6 +1,12 @@
+using Microsoft.AspNetCore.Mvc.Formatters;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
-builder.Services.AddMvc();
+builder.Services.AddMvc().AddMvcOptions(
+    options =>
+    {
+        options.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
+    });
 //.AddNewtonsoftJson(
 //    options =>
 //    {
