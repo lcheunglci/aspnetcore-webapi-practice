@@ -22,7 +22,7 @@ namespace CityInfo.API
                         Id = 2, Name = "Empire State building", Description="A 102-story skyscraper located in midtown Manhattan."
                     }
                 } },
-                new CityDto() { Id = 2, Name ="Toyko", Description="The one with that big kaiju", PointsOfInterest = new List<PointOfInterestDto>() {
+                new CityDto() { Id = 2, Name ="Tokyo", Description="The one with that big kaiju", PointsOfInterest = new List<PointOfInterestDto>() {
                     new PointOfInterestDto() {
                         Id = 1, Name = "Shibuya", Description = "The one with the crosswalk that works in every direction"
                     },
