@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 
-namespace CityInfo.API
+namespace CityInfo.API.Services
 {
-    public class LocalMailService
+    public class LocalMailService : IMailService
     {
         private string _mailTo = "admin@company.com";
         private string _mailFrom = "noreply@mycompany.com";
