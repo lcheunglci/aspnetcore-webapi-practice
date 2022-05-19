@@ -1,3 +1,4 @@
+using CityInfo.API;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using NLog;
 using NLog.Web;
@@ -29,6 +30,7 @@ try
     builder.Logging.ClearProviders();
     builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
     builder.Host.UseNLog();
+    builder.Services.AddTransient<LocalMailService>();
 
     var app = builder.Build();
 
