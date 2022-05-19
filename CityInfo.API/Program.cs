@@ -30,8 +30,12 @@ try
     builder.Logging.ClearProviders();
     builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
     builder.Host.UseNLog();
-    builder.Services.AddTransient<IMailService, LocalMailService>();
 
+#if DEBUG
+    builder.Services.AddTransient<IMailService, LocalMailService>();
+#else
+    builder.Services.AddTransient<IMailService, CloudMailService>();
+#endif 
     var app = builder.Build();
 
     app.UseRouting();
