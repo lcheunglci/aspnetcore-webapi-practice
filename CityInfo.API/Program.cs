@@ -1,5 +1,7 @@
+using CityInfo.API.Context;
 using CityInfo.API.Services;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.EntityFrameworkCore;
 using NLog;
 using NLog.Web;
 
@@ -36,6 +38,10 @@ try
 #else
     builder.Services.AddTransient<IMailService, CloudMailService>();
 #endif 
+    string ConnectionString = @"Server=(localdb)\mssqllocaldb;RelationalDatabaseFacadeExtensions=CityInfoDB, Trused_Connection = true;";
+    builder.Services.AddDbContext<CityInfoContext>(o => o.UseSqlServer());
+
+
     var app = builder.Build();
 
     app.UseRouting();
