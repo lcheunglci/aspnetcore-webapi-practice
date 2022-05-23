@@ -8,11 +8,11 @@ namespace CityInfo.API.Context
         public DbSet<City> Cities { get; set; }
         public DbSet<PointOfInterest> PointOfInterests { get; set; }
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.UseSqlServer("connectionstring");
-        //    base.OnConfiguring(optionsBuilder);
-        //}
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=CitiesInfoDB;Trusted_Connection=True;");
+            base.OnConfiguring(optionsBuilder);
+        }
 
         public CityInfoContext(DbContextOptions<CityInfoContext> options) : base(options)
         {
