@@ -7,27 +7,6 @@ using NLog.Web;
 
 var logger = NLog.LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 logger.Debug("initialize application");
-//var host = WebHost.CreateDefaultBuilder(args).Build();
-
-//using (var scope = host.Services.CreateScope())
-//{
-//    try
-//    {
-//        var context = scope.ServiceProvider.GetService<CityInfoContext>();
-
-//        // for demo purposes, delete the db & migrate on start up so
-//        // we can start with a clean slate.
-
-//        context.Database.EnsureDeleted();
-//        context.Database.Migrate();
-//    }
-//    catch (Exception ex)
-//    {
-//        logger.Error(ex, "An error occurred while migrating the database.");
-//    }
-//}
-
-//host.Run();
 
 try
 {
@@ -59,11 +38,28 @@ try
 #else
     builder.Services.AddTransient<IMailService, CloudMailService>();
 #endif 
-    string ConnectionString = @"Server=localhost;RelationalDatabaseFacadeExtensions=CityInfoDB, Trused_Connection = true;";
+    string ConnectionString = builder.Configuration["connectionStrings:cityInfoDBConnectionString"];
     builder.Services.AddDbContext<CityInfoContext>(o => o.UseSqlServer(ConnectionString));
 
-
     var app = builder.Build();
+
+    using (var scope = app.Services.CreateScope())
+    {
+        try
+        {
+            var context = scope.ServiceProvider.GetService<CityInfoContext>();
+
+            // for demo purposes, delete the db & migrate on start up so
+            // we can start with a clean slate.
+
+            context.Database.EnsureDeleted();
+            context.Database.Migrate();
+        }
+        catch (Exception ex)
+        {
+            logger.Error(ex, "An error occurred while migrating the database.");
+        }
+    }
 
     app.UseRouting();
 
