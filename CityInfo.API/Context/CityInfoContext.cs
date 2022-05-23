@@ -10,7 +10,7 @@ namespace CityInfo.API.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=CitiesInfoDB;Trusted_Connection=True;");
+            optionsBuilder.UseSqlServer("Server=localhost;Database=CitiesInfoDB;Trusted_Connection=True;");
             base.OnConfiguring(optionsBuilder);
         }
 
