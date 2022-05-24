@@ -22,7 +22,6 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "connectionsStrings:cityInfoDBConnectionString": "Server=myproductionserver;Database=CityInfoDB";UserId="NotSA";Password="NotSA"
       }
     }
   }
