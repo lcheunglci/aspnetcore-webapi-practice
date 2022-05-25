@@ -8,10 +8,9 @@ namespace CityInfo.API.Services
 
         City GetCity(int cityId, bool includePointsOfInterest);
 
-        IEnumerable<PointOfInterest> GetPointOfInterestsForCity(int cityId, bool includePointsOfInterest);
+        IEnumerable<PointOfInterest> GetPointsOfInterestForCity(int cityId);
 
-        PointOfInterest GetPointsOfInterestForCity(int cityId);
-
+        PointOfInterest GetPointOfInterestForCity(int cityId, int pointOfInterestId);
 
     }
 }
