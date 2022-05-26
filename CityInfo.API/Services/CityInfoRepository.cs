@@ -1,4 +1,8 @@
-﻿namespace CityInfo.API.Services
+﻿using CityInfo.API.Context;
+using CityInfo.API.Entities;
+using Microsoft.EntityFrameworkCore;
+
+namespace CityInfo.API.Services
 {
     public class CityInfoRepository : ICityInfoRepository
     {
