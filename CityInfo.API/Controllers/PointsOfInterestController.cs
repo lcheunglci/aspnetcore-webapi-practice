@@ -1,4 +1,5 @@
-﻿using CityInfo.API.Models;
+﻿using AutoMapper;
+using CityInfo.API.Models;
 using CityInfo.API.Services;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +13,10 @@ namespace CityInfo.API.Controllers
         private readonly ILogger<PointsOfInterestController> _logger;
         private readonly IMailService _mailService;
         private readonly ICityInfoRepository _cityRepository;
+        private readonly IMapper _mapper;
 
         public PointsOfInterestController(ILogger<PointsOfInterestController> logger,
-            IMailService mailService, ICityInfoRepository cityInfoRepository)
+            IMailService mailService, ICityInfoRepository cityInfoRepository, IMapper mapper)
         {
             _logger = logger ??
                 throw new ArgumentException(nameof(logger));
@@ -22,6 +24,8 @@ namespace CityInfo.API.Controllers
                 throw new ArgumentException(nameof(mailService));
             _cityRepository = cityInfoRepository ??
                 throw new ArgumentException(nameof(cityInfoRepository));
+            _mapper = mapper ??
+                throw new ArgumentException(nameof(mapper));
         }
 
 
@@ -38,18 +42,8 @@ namespace CityInfo.API.Controllers
 
                 var pointsOfInterestCity = _cityRepository.GetPointsOfInterestForCity(cityId);
 
-                var pointsOfInterestForCityResults = new List<PointOfInterestDto>();
-                foreach (var poi in pointsOfInterestCity)
-                {
-                    pointsOfInterestForCityResults.Add(new PointOfInterestDto()
-                    {
-                        Id = poi.Id,
-                        Name = poi.Name,
-                        Description = poi.Description
-                    });
-                }
 
-                return Ok(pointsOfInterestForCityResults);
+                return Ok(_mapper.Map<IEnumerable<PointOfInterestDto>>(pointsOfInterestCity));
             }
             catch (Exception ex)
             {
@@ -73,14 +67,7 @@ namespace CityInfo.API.Controllers
                 return NotFound();
             }
 
-            var pointOfInterestResult = new PointOfInterestDto()
-            {
-                Id = pointOfInterest.Id,
-                Name = pointOfInterest.Name,
-                Description = pointOfInterest.Description
-            };
-
-            return Ok(pointOfInterestResult);
+            return Ok(_mapper.Map<PointOfInterestDto>(pointOfInterest));
         }
 
 
