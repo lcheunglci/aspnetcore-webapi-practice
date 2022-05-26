@@ -27,6 +27,8 @@ try
     //        }
     //    });
 
+    builder.Services.AddScoped<ICityInfoRepository, CityInfoRepository>();
+
 
     // NLog: Setup NLog for Dependency injection
     builder.Logging.ClearProviders();
@@ -48,6 +50,7 @@ try
         try
         {
             var context = scope.ServiceProvider.GetService<CityInfoContext>();
+
 
             // for demo purposes, delete the db & migrate on start up so
             // we can start with a clean slate.
