@@ -132,6 +132,9 @@ namespace CityInfo.API.Controllers
             }
 
             _mapper.Map(pointOfInterest, pointOfInterestEntity);
+
+            _cityRepository.UpdatePointOfInterestForCity(cityId, pointOfInterestEntity);
+
             _cityRepository.Save();
 
             return NoContent();
