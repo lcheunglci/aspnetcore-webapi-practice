@@ -177,8 +177,13 @@ namespace CityInfo.API.Controllers
                 return BadRequest();
             }
 
-            pointOfInterestFromStore.Name = pointOfInterestToPatch.Name;
-            pointOfInterestFromStore.Description = pointOfInterestToPatch.Description;
+
+            _mapper.Map(pointOfInterestToPatch, pointOfInterestEntity);
+
+            _cityRepository.UpdatePointOfInterestForCity(cityId, pointOfInterestEntity);
+
+            _cityRepository.Save();
+
             return NoContent();
 
         }
