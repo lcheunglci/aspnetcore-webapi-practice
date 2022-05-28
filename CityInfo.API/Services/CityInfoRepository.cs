@@ -52,12 +52,17 @@ namespace CityInfo.API.Services
 
         public void UpdatePointOfInterestForCity(int cityId, PointOfInterest pointOfInterest)
         {
-
+            _context.PointOfInterests.Remove(pointOfInterest);
         }
 
         public bool Save()
         {
             return (_context.SaveChanges() >= 0);
+        }
+
+        public void DeletePointOfInterest(PointOfInterest pointOfInterst)
+        {
+            throw new NotImplementedException();
         }
     }
 }
