@@ -15,7 +15,11 @@ builder.Services.AddDbContext<CourseLibraryContext>(options =>
         @"Server=(localdb)\mssqllocaldb;Database=CourseLibraryDB;Trusted_Connection=True;");
 });
 
-
+builder.Services.AddControllers(setupAction =>
+{
+    setupAction.ReturnHttpNotAcceptable = true;
+    //setupAction.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
+}).AddXmlDataContractSerializerFormatters();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
