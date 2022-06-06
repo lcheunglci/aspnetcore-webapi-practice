@@ -1,5 +1,7 @@
 using CourseLibrary.API.DbContexts;
 using CourseLibrary.API.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,7 +23,55 @@ builder.Services.AddControllers(setupAction =>
 {
     setupAction.ReturnHttpNotAcceptable = true;
     //setupAction.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
-}).AddXmlDataContractSerializerFormatters();
+})
+    .AddXmlDataContractSerializerFormatters()
+    .ConfigureApiBehaviorOptions(setupAction =>
+    {
+        setupAction.InvalidModelStateResponseFactory = context =>
+        {
+            // create a problem details object
+            var problemDetailFactory = context.HttpContext.RequestServices.GetRequiredService<ProblemDetailsFactory>();
+            var problemDetails = problemDetailFactory.CreateValidationProblemDetails(
+                context.HttpContext,
+                context.ModelState);
+
+            // add additional info not added by default
+            problemDetails.Detail = "See the errors field for details.";
+            problemDetails.Instance = context.HttpContext.Request.Path;
+
+
+            // find out which status code to use
+            var actionExecutionContext = context as Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext;
+
+            // if there are ModelState errors and all arguments were correctly found/parsed
+            // we're dealing with validation errors
+
+            if ((context.ModelState.ErrorCount > 0) &&
+                (actionExecutionContext?.ActionArguments.Count == context.ActionDescriptor.Parameters.Count))
+            {
+                problemDetails.Type = "https://courselibrary.com/modelvalidationproblem";
+                problemDetails.Status = StatusCodes.Status422UnprocessableEntity;
+                problemDetails.Title = "One or more validation errors occurred.";
+
+                return new UnprocessableEntityObjectResult(problemDetails)
+                {
+                    ContentTypes = { "application/problem+json" }
+                };
+            };
+
+            // if one of the arguments wasn't correctly found / couldn't be parsed
+            // we are dealing with null/unparseable input
+
+            problemDetails.Status = StatusCodes.Status400BadRequest;
+            problemDetails.Title = "One or more errors on input occurred.";
+            return new BadRequestObjectResult(problemDetails)
+            {
+                ContentTypes = { "application/problem+json" }
+            };
+        };
+
+
+    });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -36,8 +86,8 @@ using (var scope = app.Services.CreateScope())
         var context = scope.ServiceProvider.GetService<CourseLibraryContext>();
         // for demo purposes, delete the database & migrate on startup so 
         // we can start with a clean slate
-        context.Database.EnsureDeleted();
-        context.Database.Migrate();
+        context?.Database.EnsureDeleted();
+        context?.Database.Migrate();
     }
     catch (Exception ex)
     {
