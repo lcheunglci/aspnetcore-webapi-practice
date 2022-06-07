@@ -3,6 +3,7 @@ using CourseLibrary.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +25,11 @@ builder.Services.AddControllers(setupAction =>
     setupAction.ReturnHttpNotAcceptable = true;
     //setupAction.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
 })
-    .AddXmlDataContractSerializerFormatters()
+    .AddNewtonsoftJson(setupAction =>
+    {
+        setupAction.SerializerSettings.ContractResolver =
+            new CamelCasePropertyNamesContractResolver();
+    }).AddXmlDataContractSerializerFormatters()
     .ConfigureApiBehaviorOptions(setupAction =>
     {
         setupAction.InvalidModelStateResponseFactory = context =>
