@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CourseLibrary.API.Entities;
 using CourseLibrary.API.Models;
 using CourseLibrary.API.Services;
 using Microsoft.AspNetCore.JsonPatch;
@@ -125,7 +126,19 @@ namespace CourseLibrary.API.Controllers
             var courseForAuthorFromRepo = _courseLibraryRepository.GetCourse(authorId, courseId);
             if (courseForAuthorFromRepo == null)
             {
-                return NotFound();
+                var courseDto = new CourseForUpdateDto();
+                patchDocument.ApplyTo(courseDto);
+                var courseToAdd = _mapper.Map<Course>(courseDto);
+                courseToAdd.Id = courseId;
+
+                _courseLibraryRepository.AddCourse(authorId, courseToAdd);
+                _courseLibraryRepository.Save();
+
+                var courseToReturn = _mapper.Map<CourseDto>(courseToAdd);
+
+                return CreatedAtRoute("GetCourseForAuthor",
+                    new { authorId, courseId = courseToReturn.Id },
+                    courseToReturn);
             }
 
             var courseToPatch = _mapper.Map<CourseForUpdateDto>(courseForAuthorFromRepo);
