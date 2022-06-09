@@ -127,11 +127,6 @@ namespace CourseLibrary.API.Services
                 throw new ArgumentNullException(nameof(authorsResourceParameters));
             }
 
-            if (string.IsNullOrWhiteSpace(authorsResourceParameters.MainCategory) && string.IsNullOrWhiteSpace(authorsResourceParameters.SearchQuery))
-            {
-                return GetAuthors();
-            }
-
             var collection = _context.Authors as IQueryable<Author>;
 
             if (!string.IsNullOrWhiteSpace(authorsResourceParameters.MainCategory))
@@ -148,7 +143,12 @@ namespace CourseLibrary.API.Services
                     || a.LastName.Contains(searchQuery));
             }
 
-            return collection.ToList();
+            // TODO: skip should be avoided for performance reasons.  Look back at the EFCore Stand up for the details and refactor this.
+
+            return collection
+                .Skip(authorsResourceParameters.PageSize * (authorsResourceParameters.PageSize - 1))
+                .Take(authorsResourceParameters.PageSize)
+                .ToList();
         }
 
         public IEnumerable<Author> GetAuthors(IEnumerable<Guid> authorIds)
