@@ -144,6 +144,14 @@ namespace CourseLibrary.API.Services
                     || a.LastName.Contains(searchQuery));
             }
 
+            if (!string.IsNullOrWhiteSpace(authorsResourceParameters.OrderBy))
+            {
+                if (authorsResourceParameters.OrderBy.ToLowerInvariant() == "name")
+                {
+                    collection = collection.OrderBy(a => a.FirstName).ThenBy(a => a.LastName);
+                }
+            }
+
             // TODO: skip should be avoided for performance reasons.  Look back at the EFCore Stand up for the details and refactor this.
 
             return PagedList<Author>.Create(
