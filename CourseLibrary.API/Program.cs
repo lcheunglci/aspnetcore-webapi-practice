@@ -18,6 +18,9 @@ builder.Services.AddDbContext<CourseLibraryContext>(options =>
         @"Server=(localdb)\mssqllocaldb;Database=CourseLibraryDB;Trusted_Connection=True;");
 });
 
+// register PropertyMappingService
+builder.Services.AddTransient<IPropertyMappingService, PropertyMappingValue>();
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddControllers(setupAction =>
