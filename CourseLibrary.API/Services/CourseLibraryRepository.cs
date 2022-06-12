@@ -151,7 +151,7 @@ namespace CourseLibrary.API.Services
                     collection = collection.OrderBy(a => a.FirstName).ThenBy(a => a.LastName);
                 }
 
-                collection.ApplySort(authorsResourceParameters.OrderBy, _mappingDictionary);
+                // collection.ApplySort(authorsResourceParameters.OrderBy, _mappingDictionary);
             }
 
             // TODO: skip should be avoided for performance reasons.  Look back at the EFCore Stand up for the details and refactor this.

@@ -19,7 +19,7 @@ builder.Services.AddDbContext<CourseLibraryContext>(options =>
 });
 
 // register PropertyMappingService
-builder.Services.AddTransient<IPropertyMappingService, PropertyMappingValue>();
+builder.Services.AddTransient<IPropertyMappingService, PropertyMappingService>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

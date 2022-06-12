@@ -1,6 +1,6 @@
 ﻿namespace CourseLibrary.API.Services
 {
-    public class PropertyMapping<TSource, TDestination>
+    public class PropertyMapping<TSource, TDestination> : IPropertyMapping
     {
         public Dictionary<string, PropertyMappingValue> _mappingDictionary { get; private set; }
 
