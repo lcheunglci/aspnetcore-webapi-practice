@@ -1,7 +1,4 @@
-﻿using CourseLibrary.API.Entities;
-using CourseLibrary.API.Models;
-
-namespace CourseLibrary.API.Services
+﻿namespace CourseLibrary.API.Services
 {
     public class PropertyMappingService : IPropertyMappingService
     {
