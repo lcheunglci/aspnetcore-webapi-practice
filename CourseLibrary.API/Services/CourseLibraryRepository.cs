@@ -150,17 +150,12 @@ namespace CourseLibrary.API.Services
 
             if (!string.IsNullOrWhiteSpace(authorsResourceParameters.OrderBy))
             {
-                if (authorsResourceParameters.OrderBy.ToLowerInvariant() == "name")
-                {
-                    collection = collection.OrderBy(a => a.FirstName).ThenBy(a => a.LastName);
-                }
-
                 // get property mapping dictionary
                 var authorPropertyMappingDictionary =
                     _propertyMappingService.GetPropertyMapping<AuthorDto, Author>();
 
 
-                collection.ApplySort(authorsResourceParameters.OrderBy, authorPropertyMappingDictionary);
+                collection = collection.ApplySort(authorsResourceParameters.OrderBy, authorPropertyMappingDictionary);
             }
 
             // TODO: skip should be avoided for performance reasons.  Look back at the EFCore Stand up for the details and refactor this.
