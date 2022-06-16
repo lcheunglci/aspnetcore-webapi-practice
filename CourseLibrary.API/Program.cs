@@ -21,6 +21,9 @@ builder.Services.AddDbContext<CourseLibraryContext>(options =>
 // register PropertyMappingService
 builder.Services.AddTransient<IPropertyMappingService, PropertyMappingService>();
 
+// register PropertyCheckerService
+builder.Services.AddTransient<IPropertyCheckerService, PropertyCheckerService>();
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddControllers(setupAction =>
