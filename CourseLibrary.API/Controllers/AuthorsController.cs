@@ -67,8 +67,27 @@ namespace CourseLibrary.API.Controllers
             Response.Headers.Add("X-Pagination",
                 JsonSerializer.Serialize(paginationMetadata));
 
-            return Ok(_mapper.Map<IEnumerable<AuthorDto>>(authorsFromRepo)
-                .ShapeData(authorsResourceParameters.Fields));
+            var links = CreateLinksForAuthors(authorsResourceParameters);
+
+
+            var shapedAuthors = _mapper.Map<IEnumerable<AuthorDto>>(authorsFromRepo)
+                .ShapeData(authorsResourceParameters.Fields);
+
+            var shapedAuthorsWithLinks = shapedAuthors.Select(author =>
+            {
+                var authorAsDictionary = author as IDictionary<string, object>;
+                var authorLinks = CreateLinksForAuthor((Guid)authorAsDictionary["Id"], null);
+                authorAsDictionary.Add("links", authorLinks);
+                return authorAsDictionary;
+            });
+
+            var linkedCollectionResource = new
+            {
+                value = shapedAuthorsWithLinks,
+                links
+            };
+
+            return Ok(linkedCollectionResource);
 
         }
 
@@ -171,6 +190,7 @@ namespace CourseLibrary.API.Controllers
                         searchQuery = authorsResourceParameters.SearchQuery
 
                     });
+                case ResourceUriType.Current:
                 default:
                     return Url.Link("GetAuthors",
                     new
@@ -220,12 +240,21 @@ namespace CourseLibrary.API.Controllers
             "courses",
             "GET"));
 
+            return links;
+        }
 
+        private IEnumerable<LinkDto> CreateLinksForAuthors(AuthorsResourceParameters authorsResourceParameters)
+        {
+            var links = new List<LinkDto>();
 
-
+            // self
+            links.Add(new LinkDto(CreateAuthorsResourceUri(
+                authorsResourceParameters, ResourceUriType.Current)
+                , "self", "GET"));
 
             return links;
         }
+
 
     }
 }
