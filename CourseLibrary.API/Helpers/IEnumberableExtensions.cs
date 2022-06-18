@@ -55,30 +55,31 @@ namespace CourseLibrary.API.Helpers
                     // add propertyInfo to list
                     propertyInfoList.Add(propertyInfo);
                 }
+            }
 
-                // run through the source objects
-                foreach (TSource sourceObject in source)
+            // run through the source objects
+            foreach (TSource sourceObject in source)
+            {
+                // create an ExpandoObject that will hold the 
+                // selected properties & values
+                var dataShapedObject = new ExpandoObject();
+
+                // Get the value of each property we have to return. For that,
+                // we run through the list
+                foreach (var propertyInfo in propertyInfoList)
                 {
-                    // create an ExpandoObject that will hold the 
-                    // selected properties & values
-                    var dataShapedObject = new ExpandoObject();
+                    // GetValue returns the value of the property on the source object
+                    var propertyValue = propertyInfo.GetValue(sourceObject);
 
-                    // Get the value of each property we have to return. For that,
-                    // we run through the list
-                    foreach (var propertyInfo in propertyInfoList)
-                    {
-                        // GetValue returns the value of the property on the source object
-                        var propertyValue = propertyInfo.GetValue(sourceObject);
-
-                        // add the field to the ExpandoObject
-                        ((IDictionary<string, object>)dataShapedObject).Add(propertyInfo.Name, propertyValue);
-                    }
-
-                    // add the ExpandoObject to the list
-                    expandoObjectList.Add(dataShapedObject);
+                    // add the field to the ExpandoObject
+                    ((IDictionary<string, object>)dataShapedObject).Add(propertyInfo.Name, propertyValue);
                 }
 
+                // add the ExpandoObject to the list
+                expandoObjectList.Add(dataShapedObject);
             }
+
+
             // return the list
             return expandoObjectList;
 
