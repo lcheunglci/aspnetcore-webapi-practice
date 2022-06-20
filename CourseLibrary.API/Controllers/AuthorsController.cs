@@ -113,7 +113,7 @@ namespace CourseLibrary.API.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost(Name = "CraeteAuthor")]
         public ActionResult<AuthorDto> CreateAuthor(AuthorForCreationDto author)
         {
             var authorEntity = _mapper.Map<Entities.Author>(author);
