@@ -81,22 +81,20 @@ builder.Services.AddControllers(setupAction =>
                 ContentTypes = { "application/problem+json" }
             };
         };
-
-
     });
 
 builder.Services.Configure<MvcOptions>(config =>
 {
-    config.InputFormatters.OfType<NewtonsoftJsonInputFormatter>()
-    .First(f => !(f is NewtonsoftJsonPatchInputFormatter))
-    .SupportedMediaTypes.Add("application/vnd.marvin.hateoas+json");
+    //config.InputFormatters.OfType<NewtonsoftJsonInputFormatter>()
+    //.First(f => !(f is NewtonsoftJsonPatchInputFormatter))
+    //.SupportedMediaTypes.Add("application/vnd.marvin.hateoas+json");
 
-    //var newtonsoftJsonOutputFormatter = config.OutputFormatters.OfType<NewtonsoftJsonOutputFormatter>()?.FirstOrDefault();
+    var newtonsoftJsonOutputFormatter = config.OutputFormatters.OfType<NewtonsoftJsonOutputFormatter>()?.FirstOrDefault();
 
-    //if (newtonsoftJsonOutputFormatter != null)
-    //{
-    //    newtonsoftJsonOutputFormatter.SupportedMediaTypes.Add("application/vnd.marvin.hateoas+json");
-    //}
+    if (newtonsoftJsonOutputFormatter != null)
+    {
+        newtonsoftJsonOutputFormatter.SupportedMediaTypes.Add("application/vnd.marvin.hateoas+json");
+    }
 });
 
 
