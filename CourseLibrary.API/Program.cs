@@ -1,6 +1,7 @@
 using CourseLibrary.API.DbContexts;
 using CourseLibrary.API.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
@@ -83,6 +84,21 @@ builder.Services.AddControllers(setupAction =>
 
 
     });
+
+builder.Services.Configure<MvcOptions>(config =>
+{
+    config.InputFormatters.OfType<NewtonsoftJsonInputFormatter>()
+    .First(f => !(f is NewtonsoftJsonPatchInputFormatter))
+    .SupportedMediaTypes.Add("application/vnd.marvin.hateoas+json");
+
+    //var newtonsoftJsonOutputFormatter = config.OutputFormatters.OfType<NewtonsoftJsonOutputFormatter>()?.FirstOrDefault();
+
+    //if (newtonsoftJsonOutputFormatter != null)
+    //{
+    //    newtonsoftJsonOutputFormatter.SupportedMediaTypes.Add("application/vnd.marvin.hateoas+json");
+    //}
+});
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
