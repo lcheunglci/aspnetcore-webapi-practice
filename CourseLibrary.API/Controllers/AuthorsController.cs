@@ -85,6 +85,12 @@ namespace CourseLibrary.API.Controllers
 
         }
 
+        [Produces("application/json",
+            "application/vnd.marvin.hateaos+json",
+            "application/vnd.marvin.author.full+json",
+            "application/vnd.marvin.author.full.hateoas.json",
+            "application/vnd.marvin.author.friendly+json",
+            "application/vnd.marvin.author.friendly.hateoas+json")]
         [HttpGet("{authorId}", Name = "GetAuthor")]
         public IActionResult GetAuthor(Guid authorId, string fields,
             [FromHeader(Name = "Accept")] string mediaType)
