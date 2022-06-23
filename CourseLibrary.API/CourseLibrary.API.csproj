@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ActionConstraints\" />
     <Folder Include="ValidationAttributes\" />
   </ItemGroup>
 
