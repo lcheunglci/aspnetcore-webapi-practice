@@ -156,31 +156,6 @@ namespace CourseLibrary.API.Controllers
             return Ok(friendlyResourceToReturn);
         }
 
-
-        [HttpPost(Name = "CreateAuthor")]
-        [RequestHanderMatchesMediaType("Content-Type",
-            "application/json",
-            "application/vnd.marvin.authorforcreation+json")]
-        [Consumes("application/vnd.marvin.authorforcreation+json")]
-        public ActionResult<AuthorDto> CreateAuthor(AuthorForCreationDto author)
-        {
-            var authorEntity = _mapper.Map<Entities.Author>(author);
-            _courseLibraryRepository.AddAuthor(authorEntity);
-            _courseLibraryRepository.Save();
-
-            var authorToReturn = _mapper.Map<AuthorDto>(authorEntity);
-
-            var links = CreateLinksForAuthor(authorToReturn.Id, null);
-
-            var linkedResourceToReturn = authorToReturn.ShapeData(null) as IDictionary<string, object>;
-
-            return CreatedAtRoute("GetAuthor",
-                new { authorId = linkedResourceToReturn["Id"] }
-                , linkedResourceToReturn);
-
-        }
-
-
         [HttpPost(Name = "CreateAuthorWithDateOfDeath")]
         [RequestHanderMatchesMediaType("Content-Type",
             "application/json",
@@ -204,6 +179,28 @@ namespace CourseLibrary.API.Controllers
 
         }
 
+        [HttpPost(Name = "CreateAuthor")]
+        [RequestHanderMatchesMediaType("Content-Type",
+            "application/json",
+            "application/vnd.marvin.authorforcreation+json")]
+        [Consumes("application/vnd.marvin.authorforcreation+json")]
+        public ActionResult<AuthorDto> CreateAuthor(AuthorForCreationDto author)
+        {
+            var authorEntity = _mapper.Map<Entities.Author>(author);
+            _courseLibraryRepository.AddAuthor(authorEntity);
+            _courseLibraryRepository.Save();
+
+            var authorToReturn = _mapper.Map<AuthorDto>(authorEntity);
+
+            var links = CreateLinksForAuthor(authorToReturn.Id, null);
+
+            var linkedResourceToReturn = authorToReturn.ShapeData(null) as IDictionary<string, object>;
+
+            return CreatedAtRoute("GetAuthor",
+                new { authorId = linkedResourceToReturn["Id"] }
+                , linkedResourceToReturn);
+
+        }
 
         [HttpOptions]
         public IActionResult GetAuthorsOptions()
