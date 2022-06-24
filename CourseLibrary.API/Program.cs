@@ -32,12 +32,18 @@ builder.Services.AddResponseCaching();
 builder.Services.AddControllers(setupAction =>
 {
     setupAction.ReturnHttpNotAcceptable = true;
+
+    setupAction.CacheProfiles.Add("240SecondsCacheProfile", new CacheProfile()
+    {
+        Duration = 240
+    });
     //setupAction.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
 })
     .AddNewtonsoftJson(setupAction =>
     {
         setupAction.SerializerSettings.ContractResolver =
             new CamelCasePropertyNamesContractResolver();
+
     })
     .AddXmlDataContractSerializerFormatters()
     .ConfigureApiBehaviorOptions(setupAction =>
