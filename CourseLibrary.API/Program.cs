@@ -27,6 +27,8 @@ builder.Services.AddTransient<IPropertyCheckerService, PropertyCheckerService>()
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+builder.Services.AddResponseCaching();
+
 builder.Services.AddControllers(setupAction =>
 {
     setupAction.ReturnHttpNotAcceptable = true;
@@ -36,7 +38,8 @@ builder.Services.AddControllers(setupAction =>
     {
         setupAction.SerializerSettings.ContractResolver =
             new CamelCasePropertyNamesContractResolver();
-    }).AddXmlDataContractSerializerFormatters()
+    })
+    .AddXmlDataContractSerializerFormatters()
     .ConfigureApiBehaviorOptions(setupAction =>
     {
         setupAction.InvalidModelStateResponseFactory = context =>
@@ -83,6 +86,12 @@ builder.Services.AddControllers(setupAction =>
         };
     });
 
+
+
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 builder.Services.Configure<MvcOptions>(config =>
 {
     //config.InputFormatters.OfType<NewtonsoftJsonInputFormatter>()
@@ -97,10 +106,6 @@ builder.Services.Configure<MvcOptions>(config =>
     }
 });
 
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -139,6 +144,8 @@ else
         });
     });
 }
+
+app.UseResponseCaching();
 
 app.UseRouting();
 
