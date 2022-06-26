@@ -27,7 +27,15 @@ builder.Services.AddTransient<IPropertyCheckerService, PropertyCheckerService>()
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-builder.Services.AddHttpCacheHeaders();
+builder.Services.AddHttpCacheHeaders((expirationModelOptions) =>
+{
+    expirationModelOptions.MaxAge = 60;
+    expirationModelOptions.CacheLocation = Marvin.Cache.Headers.CacheLocation.Private;
+},
+(validationModelOptions) =>
+{
+    validationModelOptions.MustRevalidate = true;
+});
 
 builder.Services.AddResponseCaching();
 
