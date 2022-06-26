@@ -27,6 +27,8 @@ builder.Services.AddTransient<IPropertyCheckerService, PropertyCheckerService>()
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+builder.Services.AddHttpCacheHeaders();
+
 builder.Services.AddResponseCaching();
 
 builder.Services.AddControllers(setupAction =>
@@ -152,6 +154,8 @@ else
 }
 
 app.UseResponseCaching();
+
+app.UseHttpCacheHeaders();
 
 app.UseRouting();
 
