@@ -5,7 +5,9 @@ VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CityInfo.API", "CityInfo.API\CityInfo.API.csproj", "{5E63695A-8303-4E30-8630-9DFAB92EF36A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CourseLibrary.API", "CourseLibrary.API\CourseLibrary.API.csproj", "{699F6DCA-B9C2-4CE2-99F1-C10C84ACD209}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CourseLibrary.API", "CourseLibrary.API\CourseLibrary.API.csproj", "{699F6DCA-B9C2-4CE2-99F1-C10C84ACD209}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Books.API", "Books.API\Books.API.csproj", "{710980D7-CE42-410B-8839-47EAABDC0232}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{699F6DCA-B9C2-4CE2-99F1-C10C84ACD209}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{699F6DCA-B9C2-4CE2-99F1-C10C84ACD209}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{699F6DCA-B9C2-4CE2-99F1-C10C84ACD209}.Release|Any CPU.Build.0 = Release|Any CPU
+		{710980D7-CE42-410B-8839-47EAABDC0232}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{710980D7-CE42-410B-8839-47EAABDC0232}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{710980D7-CE42-410B-8839-47EAABDC0232}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{710980D7-CE42-410B-8839-47EAABDC0232}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
