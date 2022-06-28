@@ -20,7 +20,18 @@ namespace Books.API.Controllers
         {
             var bookEntities = await _bookRepository.GetBooksAsync();
             return Ok(bookEntities);
+        }
 
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> GetBook(Guid id)
+        {
+            var bookentity = await _bookRepository.GetBookAsync(id);
+            if (bookentity == null)
+            {
+                return NotFound();
+            }
+            return Ok(bookentity);
         }
     }
 }
