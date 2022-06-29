@@ -2,7 +2,7 @@
 {
     public interface IBookRepository
     {
-        //IEnumerable<Entities.Book> GetBooks();
+        IEnumerable<Entities.Book> GetBooks();
 
         //Entities.Book GetBook(Guid id);
 

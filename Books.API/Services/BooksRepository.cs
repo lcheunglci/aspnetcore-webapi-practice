@@ -25,6 +25,12 @@ namespace Books.API.Services
             return await _context.Books.Include(b => b.Author).ToListAsync();
         }
 
+        public IEnumerable<Book> GetBooks()
+        {
+            return _context.Books.Include(b => b.Author).ToList();
+        }
+
+
         public void Dispose()
         {
             Dispose(true);
@@ -42,7 +48,6 @@ namespace Books.API.Services
                 }
             }
         }
-
 
     }
 }
