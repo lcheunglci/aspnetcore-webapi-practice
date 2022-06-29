@@ -2,9 +2,11 @@ using Books.API.Context;
 using Books.API.Services;
 using Microsoft.EntityFrameworkCore;
 
+
+// throttle the thread pool (set available threads to amount of processors)
+ThreadPool.SetMaxThreads(Environment.ProcessorCount, Environment.ProcessorCount);
+
 var builder = WebApplication.CreateBuilder(args);
-
-
 
 builder.Services.AddControllers();
 

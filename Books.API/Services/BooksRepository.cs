@@ -2,6 +2,8 @@
 using Books.API.Entities;
 using Microsoft.EntityFrameworkCore;
 
+
+
 namespace Books.API.Services
 {
     public class BooksRepository : IBookRepository, IDisposable
@@ -16,12 +18,14 @@ namespace Books.API.Services
 
         public async Task<Book> GetBookAsync(Guid id)
         {
+            _context.Database.ExecuteSqlRaw("WAITFOR DELAY '00:00:02';");
             return await _context.Books
                 .Include(b => b.Author).FirstOrDefaultAsync(b => b.Id == id);
         }
 
         public async Task<IEnumerable<Book>> GetBooksAsync()
         {
+            await _context.Database.ExecuteSqlRawAsync("WAITFOR DELAY '00:00:02';");
             return await _context.Books.Include(b => b.Author).ToListAsync();
         }
 
