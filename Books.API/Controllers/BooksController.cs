@@ -17,6 +17,7 @@ namespace Books.API.Controllers
         }
 
         [HttpGet]
+        [BookResultFilter]
         public async Task<IActionResult> GetBooks()
         {
             var bookEntities = await _bookRepository.GetBooksAsync();
@@ -25,7 +26,7 @@ namespace Books.API.Controllers
 
         [HttpGet]
         [Route("{id}")]
-        [BookResultFilter()]
+        [BookResultFilter]
         public async Task<IActionResult> GetBook(Guid id)
         {
             var bookentity = await _bookRepository.GetBookAsync(id);
