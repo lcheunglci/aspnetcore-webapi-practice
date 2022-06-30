@@ -47,9 +47,11 @@ namespace Books.API.Controllers
         {
             var bookEntity = _mapper.Map<Entities.Book>(bookForCreation);
             _bookRepository.AddBook(bookEntity);
-            await _bookRepository.SaveChangesAsync();
 
             await _bookRepository.SaveChangesAsync();
+
+            // Fetch (re-fetch) the book from the data store, including the author
+            await _bookRepository.GetBookAsync(bookEntity.Id);
 
             return CreatedAtRoute(
                 "GetBook",
