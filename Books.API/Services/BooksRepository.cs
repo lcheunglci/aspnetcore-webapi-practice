@@ -41,6 +41,23 @@ namespace Books.API.Services
             GC.SuppressFinalize(this);
         }
 
+
+        public void AddBook(Book bookToAdd)
+        {
+            if (bookToAdd == null)
+            {
+                throw new ArgumentNullException(nameof(bookToAdd));
+            }
+
+            _context.Add(bookToAdd);
+        }
+
+        public async Task<bool> SaveChangesAsync()
+        {
+            // return if 1 or more entities were changed
+            return (await _context.SaveChangesAsync() > 0);
+        }
+
         protected virtual void Dispose(bool dispositing)
         {
             if (dispositing)
