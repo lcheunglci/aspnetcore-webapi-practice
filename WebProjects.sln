@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CourseLibrary.API", "Course
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Books.API", "Books.API\Books.API.csproj", "{710980D7-CE42-410B-8839-47EAABDC0232}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookCovers.API", "BookCovers.API\BookCovers.API.csproj", "{B79E56EA-A559-4762-8A64-C2D48CD2BBE3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{710980D7-CE42-410B-8839-47EAABDC0232}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{710980D7-CE42-410B-8839-47EAABDC0232}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{710980D7-CE42-410B-8839-47EAABDC0232}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B79E56EA-A559-4762-8A64-C2D48CD2BBE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B79E56EA-A559-4762-8A64-C2D48CD2BBE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B79E56EA-A559-4762-8A64-C2D48CD2BBE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B79E56EA-A559-4762-8A64-C2D48CD2BBE3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
