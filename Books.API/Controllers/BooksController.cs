@@ -34,15 +34,20 @@ namespace Books.API.Controllers
         [BookResultFilter]
         public async Task<IActionResult> GetBook(Guid id)
         {
-            var bookentity = await _bookRepository.GetBookAsync(id);
-            if (bookentity == null)
+            var bookEntity = await _bookRepository.GetBookAsync(id);
+            if (bookEntity == null)
             {
                 return NotFound();
             }
-            var bookCover = await _bookRepository.GetBookCoversAsync(id);
+            var bookCovers = await _bookRepository.GetBookCoversAsync(id);
 
+            //var propertyBag = new Tuple<Entities.Book, IEnumerable<ExternalModels.BookCover>>(bookEntity, bookCover);
 
-            return Ok(bookentity);
+            //(Entities.Book book, IEnumerable<ExternalModels.BookCover> bookCovers) propertyBag = (bookEntity, bookCovers);
+
+            //return Ok((book: bookEntity, bookCovers: bookCovers));
+
+            return Ok((bookEntity, bookCovers));
         }
 
         [HttpPost]
