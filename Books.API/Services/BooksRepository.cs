@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace Books.API.Services
 {
-    public class BooksRepository : IBookRepository, IDisposable
+    public class BooksRepository : IBooksRepository, IDisposable
     {
         private BookContext _context;
         private readonly IHttpClientFactory _httpClientFactory;

@@ -10,10 +10,10 @@ namespace Books.API.Controllers
     [Route("api/books")]
     public class BooksController : ControllerBase
     {
-        private readonly IBookRepository _bookRepository;
+        private readonly IBooksRepository _bookRepository;
         private readonly IMapper _mapper;
 
-        public BooksController(IBookRepository booksRepository, IMapper mapper)
+        public BooksController(IBooksRepository booksRepository, IMapper mapper)
         {
             _bookRepository = booksRepository ??
                 throw new ArgumentNullException(nameof(booksRepository));

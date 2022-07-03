@@ -2,7 +2,7 @@
 
 namespace Books.API.Services
 {
-    public interface IBookRepository
+    public interface IBooksRepository
     {
         IEnumerable<Entities.Book> GetBooks();
 

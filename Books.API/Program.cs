@@ -16,7 +16,7 @@ builder.Services.AddDbContext<BookContext>(o => o.UseSqlServer(connectionString)
 
 
 builder.Services.AddHttpClient();
-builder.Services.AddScoped<IBookRepository, BooksRepository>();
+builder.Services.AddScoped<IBooksRepository, BooksRepository>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.Configure<ApplicationBuilder>(config =>

@@ -12,10 +12,10 @@ namespace Books.API.Controllers
     [BookResultFilter]
     public class BookCollectionController : ControllerBase
     {
-        private readonly IBookRepository _bookRepository;
+        private readonly IBooksRepository _bookRepository;
         private readonly IMapper _mapper;
 
-        public BookCollectionController(IBookRepository bookRepository, IMapper mapper)
+        public BookCollectionController(IBooksRepository bookRepository, IMapper mapper)
         {
             _bookRepository = bookRepository ?? throw new ArgumentNullException(nameof(bookRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
