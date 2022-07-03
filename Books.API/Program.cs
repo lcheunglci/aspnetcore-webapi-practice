@@ -14,6 +14,8 @@ var connectionString = builder.Configuration["ConnectionStrings:BooksDBConnectio
 
 builder.Services.AddDbContext<BookContext>(o => o.UseSqlServer(connectionString));
 
+
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<IBookRepository, BooksRepository>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

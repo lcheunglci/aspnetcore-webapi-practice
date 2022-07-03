@@ -1,4 +1,6 @@
-﻿namespace Books.API.Services
+﻿using Books.API.ExternalModels;
+
+namespace Books.API.Services
 {
     public interface IBookRepository
     {
@@ -12,6 +14,9 @@
 
 
         Task<IEnumerable<Entities.Book>> GetBooksAsync(IEnumerable<Guid> bookIds);
+
+
+        Task<BookCover> GetBookCoverAsync(string coverId);
 
         void AddBook(Entities.Book bookToAdd);
 

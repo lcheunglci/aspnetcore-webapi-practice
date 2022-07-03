@@ -1,18 +1,20 @@
 ﻿using Books.API.Context;
 using Books.API.Entities;
+using Books.API.ExternalModels;
 using Microsoft.EntityFrameworkCore;
-
-
+using System.Text.Json;
 
 namespace Books.API.Services
 {
     public class BooksRepository : IBookRepository, IDisposable
     {
         private BookContext _context;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public BooksRepository(BookContext context)
+        public BooksRepository(BookContext context, IHttpClientFactory httpClientFactory)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
+            _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
         }
 
 
@@ -58,6 +60,29 @@ namespace Books.API.Services
             return (await _context.SaveChangesAsync() > 0);
         }
 
+        public async Task<IEnumerable<Book>> GetBooksAsync(IEnumerable<Guid> bookIds)
+        {
+            return await _context.Books.Where(b => bookIds.Contains(b.Id))
+                .Include(b => b.Author).ToListAsync();
+        }
+
+        public async Task<BookCover> GetBookCoverAsync(string coverId)
+        {
+            var httpClient = _httpClientFactory.CreateClient();
+            // pass through a dummy name
+            var response = await httpClient.GetAsync($"http://localhost:52644/api/bookcovers/{coverId}");
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonSerializer.Deserialize<BookCover>(await response.Content.ReadAsStringAsync(),
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+            }
+
+            return null;
+        }
+
         protected virtual void Dispose(bool dispositing)
         {
             if (dispositing)
@@ -70,10 +95,5 @@ namespace Books.API.Services
             }
         }
 
-        public async Task<IEnumerable<Book>> GetBooksAsync(IEnumerable<Guid> bookIds)
-        {
-            return await _context.Books.Where(b => bookIds.Contains(b.Id))
-                .Include(b => b.Author).ToListAsync();
-        }
     }
 }

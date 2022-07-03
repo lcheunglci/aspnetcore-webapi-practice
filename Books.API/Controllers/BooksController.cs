@@ -39,6 +39,9 @@ namespace Books.API.Controllers
             {
                 return NotFound();
             }
+            var bookCover = await _bookRepository.GetBookCoverAsync("dummycover");
+
+
             return Ok(bookentity);
         }
 
