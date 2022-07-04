@@ -10,12 +10,14 @@ namespace Books.API.Services
     {
         private BookContext _context;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILogger<BooksRepository> _logger;
         private CancellationTokenSource _cancellationTokenSource;
 
-        public BooksRepository(BookContext context, IHttpClientFactory httpClientFactory)
+        public BooksRepository(BookContext context, IHttpClientFactory httpClientFactory, ILogger<BooksRepository> logger)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
 
@@ -95,7 +97,8 @@ namespace Books.API.Services
             var bookCoverUrls = new[]
             {
                 $"https://localhost:52644/api/bookcovers/{bookId}-dummerycover1",
-                $"https://localhost:52644/api/bookcovers/{bookId}-dummerycover2?returnFault=true",
+                //$"https://localhost:52644/api/bookcovers/{bookId}-dummerycover2?returnFault=true",
+                $"https://localhost:52644/api/bookcovers/{bookId}-dummerycover2",
                 $"https://localhost:52644/api/bookcovers/{bookId}-dummerycover3",
                 $"https://localhost:52644/api/bookcovers/{bookId}-dummerycover4",
                 $"https://localhost:52644/api/bookcovers/{bookId}-dummerycover5",
@@ -111,8 +114,25 @@ namespace Books.API.Services
             // start the tasks
             var downloadBookCoverTasks = downloadBookCoverTasksQuery.ToList();
 
-            return await Task.WhenAll(downloadBookCoverTasks);
+            try
+            {
+                return await Task.WhenAll(downloadBookCoverTasks);
+            }
+            catch (OperationCanceledException operationCanceledException)
+            {
+                _logger.LogInformation($"{operationCanceledException.Message}");
+                foreach (var task in downloadBookCoverTasks)
+                {
+                    _logger.LogInformation($"Task {task.Id} has status {task.Status}");
+                }
 
+                return new List<BookCover>();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{ex.Message}");
+                throw;
+            }
             //foreach (var bookCoverUrl in bookCoverUrls)
             //{
             //    var response = await httpClient.GetAsync(bookCoverUrl);
@@ -134,6 +154,9 @@ namespace Books.API.Services
         private async Task<BookCover> DownloadBookCoverAsync(HttpClient httpClient, string bookCoverUrl,
             CancellationToken cancellationToken)
         {
+            // throw new Exception("Cannot download book cover. " +
+            //    "write isn't finishing book fast enough");
+
             var response = await httpClient
                 .GetAsync(bookCoverUrl, cancellationToken);
 
