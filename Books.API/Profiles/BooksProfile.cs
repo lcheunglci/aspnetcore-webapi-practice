@@ -11,6 +11,12 @@ namespace Books.API.Profiles
                 $"{src.Author.FirstName} {src.Author.FirstName}"));
 
             CreateMap<Models.BookForCreation, Entities.Book>();
+
+            CreateMap<Entities.Book, Models.BookWithCovers>()
+                .ForMember(dest => dest.Author, opt => opt.MapFrom(src =>
+                    $"{src.Author.FirstName} {src.Author.LastName}"));
+
+            CreateMap<ExternalModels.BookCover, Models.BookCover>();
         }
     }
 }
