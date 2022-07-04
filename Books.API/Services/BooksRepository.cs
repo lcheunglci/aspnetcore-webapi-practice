@@ -173,6 +173,45 @@ namespace Books.API.Services
             //return bookCovers;
         }
 
+
+        // Pitfall: modifying shared state
+        // Not thread safe, correctness is not guaranteed
+        //private async Task<IEnumerable<BookCover>> DownloadBookCoversAsync(Guid bookId)
+        //{
+        //    var bookCoversUrls = new[]
+        //    {
+        //        $"http://localhost:52644/api/bookcovers/{bookId}-dummycover1",
+        //        $"http://localhost:52644/api/bookcovers/{bookId}-dummycover2"
+        //    };
+
+        //    _cancellationTokenSource = new CancellationTokenSource();
+
+        //    var bookCovers = new List<BookCover>();
+        //    var downloadTask1 = DownloadBookCoverAsync(bookCoversUrls[0], bookCovers);
+        //    var downloadTask2 = DownloadBookCoverAsync(bookCoversUrls[1], bookCovers);
+        //    await Task.WhenAll(downloadTask1, downloadTask2);
+        //    return bookCovers;
+        //}
+
+        //// Pitfall
+        //private async Task DownloadBookCoverAsync(string bookCoverUrl, List<BookCover> bookCovers)
+        //{
+        //    var httpClient = _httpClientFactory.CreateClient();
+        //    var response = await httpClient
+        //        .GetAsync(bookCoverUrl);
+
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        bookCovers.Add(JsonSerializer.Deserialize<BookCover>(
+        //            await response.Content.ReadAsStringAsync(),
+        //            new JsonSerializerOptions()
+        //            {
+        //                PropertyNameCaseInsensitive = true,
+        //            }));
+        //    }
+        //}
+
+
         private async Task<BookCover> DownloadBookCoverAsync(HttpClient httpClient, string bookCoverUrl,
             CancellationToken cancellationToken)
         {
