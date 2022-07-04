@@ -98,23 +98,51 @@ namespace Books.API.Services
                 $"https://localhost:52644/api/bookcovers/{bookId}-dummerycover5",
             };
 
+            // create the tasks
+            var downloadBookCoverTasksQuery =
+                from bookCoverUrl
+                in bookCoverUrls
+                select DownloadBookCoverAsync(httpClient, bookCoverUrl);
 
-            foreach (var bookCoverUrl in bookCoverUrls)
+
+            // start the tasks
+            var downloadBookCoverTasks = downloadBookCoverTasksQuery.ToList();
+
+            return await Task.WhenAll(downloadBookCoverTasks);
+
+            //foreach (var bookCoverUrl in bookCoverUrls)
+            //{
+            //    var response = await httpClient.GetAsync(bookCoverUrl);
+
+            //    if (response.IsSuccessStatusCode)
+            //    {
+            //        bookCovers.Add(JsonSerializer.Deserialize<BookCover>(
+            //            await response.Content.ReadAsStringAsync(),
+            //            new JsonSerializerOptions()
+            //            {
+            //                PropertyNameCaseInsensitive = true,
+            //            }));
+            //    }
+            //}
+
+            //return bookCovers;
+        }
+
+        private static async Task<BookCover> DownloadBookCoverAsync(HttpClient httpClient, string bookCoverUrl)
+        {
+            var response = await httpClient.GetAsync(bookCoverUrl);
+
+            if (response.IsSuccessStatusCode)
             {
-                var response = await httpClient.GetAsync(bookCoverUrl);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    bookCovers.Add(JsonSerializer.Deserialize<BookCover>(
-                        await response.Content.ReadAsStringAsync(),
-                        new JsonSerializerOptions()
-                        {
-                            PropertyNameCaseInsensitive = true,
-                        }));
-                }
+                var bookCover = JsonSerializer.Deserialize<BookCover>(
+                    await response.Content.ReadAsStringAsync(),
+                    new JsonSerializerOptions()
+                    {
+                        PropertyNameCaseInsensitive = true,
+                    });
+                return bookCover;
             }
-
-            return bookCovers;
+            return null;
         }
 
         protected virtual void Dispose(bool dispositing)
