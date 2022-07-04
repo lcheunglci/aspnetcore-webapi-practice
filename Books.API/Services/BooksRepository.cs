@@ -20,10 +20,32 @@ namespace Books.API.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        // Pitfall: Using Task.Run() on the server
+        // ASP.NET Core is not optimized for Task.Run() and it created extra overhead
+        // also decreases scalability, and is mainly intended for client side apps for responsiveness
+        private Task<int> GetBookPages()
+        {
+            return Task.Run(() =>
+            {
+                var pageCalculator = new Books.Legacy.ComplicatedPageCalculator();
+                _logger.LogInformation($"ThreadId when calculating the amount of pages: "
+                    + $"{System.Threading.Thread.CurrentThread.ManagedThreadId}");
+                return pageCalculator.CalculateBookPage();
+            });
+        }
 
         public async Task<Book> GetBookAsync(Guid id)
         {
             _context.Database.ExecuteSqlRaw("WAITFOR DELAY '00:00:02';");
+
+            //var pageCalculator = new Books.Legacy.ComplicatedPageCalculator();
+            //var amountOfPages = pageCalculator.CalculateBookPage();
+
+            //_logger.LogInformation($"ThreadId when entering GetBookAsync: " +
+            //    $"{System.Threading.Thread.CurrentThread.ManagedThreadId}");
+
+            //var bookPages = await GetBookPages();
+
             return await _context.Books
                 .Include(b => b.Author).FirstOrDefaultAsync(b => b.Id == id);
         }
