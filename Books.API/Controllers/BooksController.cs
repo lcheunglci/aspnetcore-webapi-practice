@@ -21,6 +21,19 @@ namespace Books.API.Controllers
 
         }
 
+        //// Pitfall: blocking async code
+        // wait() and result on the task blocks the thread
+        // hurts scalability,
+        // asp.net does not have a synchronization context (only asp.net does), which improves performance
+        // makes it easier to write async code
+        //[HttpGet]
+        //[BookResultFilter]
+        //public IActionResult GetBooks()
+        //{
+        //    var bookEntities = _bookRepository.GetBooksAsync().Result;
+        //    return Ok(bookEntities);
+        //}
+
         [HttpGet("Get Book")]
         [BookResultFilter]
         public async Task<IActionResult> GetBooks()
