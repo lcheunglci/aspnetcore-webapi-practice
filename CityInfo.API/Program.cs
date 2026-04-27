@@ -1,4 +1,4 @@
-using CityInfo.API.Context;
+﻿using CityInfo.API.Context;
 using CityInfo.API.Services;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
@@ -74,7 +74,11 @@ try
 
     app.UseStatusCodePages();
 
-    app.MapGet("/", () => "Hello World!");
+	app.UseHttpsRedirection();
+
+	// app.UseAuthorization();
+
+	app.MapControllers();
 
     app.Run();
 }
