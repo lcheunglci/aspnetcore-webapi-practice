@@ -33,6 +33,13 @@ app.MapGet("/weatherforecast", () =>
 	return forecast;
 });
 
+using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+{
+	var context = serviceScope.ServiceProvider.GetRequiredService<DishesDbContext>();
+	context.Database.EnsureDeleted();
+	context.Database.Migrate();
+}
+
 app.Run();
 
 internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
