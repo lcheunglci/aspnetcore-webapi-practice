@@ -1,6 +1,13 @@
+﻿using DishesAPI.DbContexts;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+// connection string from appSettings
+builder.Services.AddDbContext<DishesDbContext>(o => o.UseSqlite(
+	builder.Configuration["ConnectionStrings:DishesDBConnectionString"]));
 
 var app = builder.Build();
 
