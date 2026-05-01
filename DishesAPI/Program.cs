@@ -22,6 +22,24 @@ app.MapGet("/dishes", async (DishesDbContext dishesDbContext) =>
 	return await dishesDbContext.Dishes.ToListAsync();
 });
 
+app.MapGet("/dishes/{dishId:guid}", async (DishesDbContext dishesDbContext, Guid dishId) =>
+{
+	return await dishesDbContext.Dishes.FirstOrDefaultAsync(d => d.Id == dishId);
+});
+
+app.MapGet("/dishes/{dishName}", async (DishesDbContext dishesDbContext, string dishName) =>
+{
+	return await dishesDbContext.Dishes.FirstOrDefaultAsync(d => d.Name == dishName);
+});
+
+app.MapGet("/dishes/{dishId}/ingredients", async (DishesDbContext dishesDbContext, Guid dishId) =>
+{
+	return (await dishesDbContext.Dishes
+		.Include(d => d.Ingredients)
+		.FirstOrDefaultAsync(d => d.Id == dishId))?.Ingredients;
+});
+
+
 using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
 {
 	var context = serviceScope.ServiceProvider.GetRequiredService<DishesDbContext>();
