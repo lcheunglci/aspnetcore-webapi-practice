@@ -1,5 +1,7 @@
 ﻿using DishesAPI.DbContexts;
+using DishesAPI.Extensions;
 using Microsoft.EntityFrameworkCore;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,24 +21,26 @@ app.UseHttpsRedirection();
 
 app.MapGet("/dishes", async (DishesDbContext dishesDbContext) =>
 {
-	return await dishesDbContext.Dishes.ToListAsync();
+	return (await dishesDbContext.Dishes.ToListAsync()).ToDishDtoList();
 });
 
 app.MapGet("/dishes/{dishId:guid}", async (DishesDbContext dishesDbContext, Guid dishId) =>
 {
-	return await dishesDbContext.Dishes.FirstOrDefaultAsync(d => d.Id == dishId);
+	return (await dishesDbContext.Dishes.FirstOrDefaultAsync(d => d.Id == dishId))?.ToDishDto();
 });
 
 app.MapGet("/dishes/{dishName}", async (DishesDbContext dishesDbContext, string dishName) =>
 {
-	return await dishesDbContext.Dishes.FirstOrDefaultAsync(d => d.Name == dishName);
+	return (await dishesDbContext.Dishes.FirstOrDefaultAsync(d => d.Name == dishName))?.ToDishDto();
 });
 
 app.MapGet("/dishes/{dishId}/ingredients", async (DishesDbContext dishesDbContext, Guid dishId) =>
 {
-	return (await dishesDbContext.Dishes
+	var dishEntity = (await dishesDbContext.Dishes
 		.Include(d => d.Ingredients)
 		.FirstOrDefaultAsync(d => d.Id == dishId))?.Ingredients;
+
+	return dishEntity?.ToIngredientDtoList(dishId);
 });
 
 
