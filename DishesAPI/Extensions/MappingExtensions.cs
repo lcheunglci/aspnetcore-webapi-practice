@@ -28,8 +28,9 @@ namespace DishesAPI.Extensions
 				DishId = dishId
 			};
 		}
-		public static IEnumerable<IngredientDto> ToIngredientDtoList(this IEnumerable<Ingredient> ingredients, Guid dishId)
 
+		public static IEnumerable<IngredientDto> ToIngredientDtoList(
+			this IEnumerable<Ingredient> ingredients, Guid dishId)
 		{
 			return ingredients.Select(i => i.ToIngredientDto(dishId));
 		}

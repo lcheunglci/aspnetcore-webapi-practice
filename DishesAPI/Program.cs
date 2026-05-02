@@ -26,21 +26,23 @@ app.MapGet("/dishes", async (DishesDbContext dishesDbContext) =>
 
 app.MapGet("/dishes/{dishId:guid}", async (DishesDbContext dishesDbContext, Guid dishId) =>
 {
-	return (await dishesDbContext.Dishes.FirstOrDefaultAsync(d => d.Id == dishId))?.ToDishDto();
+	var dishEntity = await dishesDbContext.Dishes.FirstOrDefaultAsync(d => d.Id == dishId);
+	return dishEntity?.ToDishDto();
 });
 
 app.MapGet("/dishes/{dishName}", async (DishesDbContext dishesDbContext, string dishName) =>
 {
-	return (await dishesDbContext.Dishes.FirstOrDefaultAsync(d => d.Name == dishName))?.ToDishDto();
+	var dishEntity = (await dishesDbContext.Dishes.FirstOrDefaultAsync(d => d.Name == dishName));
+	return dishEntity?.ToDishDto();
 });
 
 app.MapGet("/dishes/{dishId}/ingredients", async (DishesDbContext dishesDbContext, Guid dishId) =>
 {
 	var dishEntity = (await dishesDbContext.Dishes
 		.Include(d => d.Ingredients)
-		.FirstOrDefaultAsync(d => d.Id == dishId))?.Ingredients;
+		.FirstOrDefaultAsync(d => d.Id == dishId));
 
-	return dishEntity?.ToIngredientDtoList(dishId);
+	return dishEntity?.Ingredients.ToIngredientDtoList(dishId);
 });
 
 
