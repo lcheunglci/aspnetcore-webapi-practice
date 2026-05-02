@@ -1,5 +1,7 @@
-﻿using DishesAPI.DbContexts;
+﻿using System.Security.Claims;
+using DishesAPI.DbContexts;
 using DishesAPI.Extensions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -19,9 +21,15 @@ app.UseHttpsRedirection();
 
 
 
-app.MapGet("/dishes", async (DishesDbContext dishesDbContext) =>
+app.MapGet("/dishes", async (DishesDbContext dishesDbContext,
+	ClaimsPrincipal claimsPrincipal,
+	[FromQuery] string? name) =>
 {
-	return (await dishesDbContext.Dishes.ToListAsync()).ToDishDtoList();
+	Console.WriteLine($"User authenticated: {claimsPrincipal.Identity?.IsAuthenticated}");
+
+	return (await dishesDbContext.Dishes
+	.Where(d => name == null || d.Name.Contains(name))
+	.ToListAsync()).ToDishDtoList();
 });
 
 app.MapGet("/dishes/{dishId:guid}", async (DishesDbContext dishesDbContext, Guid dishId) =>
