@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddProblemDetails();
+
 // Add services to the container.
 
 // connection string from appSettings
@@ -19,8 +21,14 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
+if (!app.Environment.IsDevelopment())
+{
+	app.UseExceptionHandler();
+}
+
 app.UseHttpsRedirection();
 
+app.UseStatusCodePages();
 
 
 app.MapGet("/dishes", async Task<Ok<IEnumerable<DishDto>>>(DishesDbContext dishesDbContext,
