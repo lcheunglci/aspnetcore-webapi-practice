@@ -1,6 +1,8 @@
 ﻿using System.Security.Claims;
 using DishesAPI.DbContexts;
 using DishesAPI.Extensions;
+using DishesAPI.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,36 +23,48 @@ app.UseHttpsRedirection();
 
 
 
-app.MapGet("/dishes", async (DishesDbContext dishesDbContext,
+app.MapGet("/dishes", async Task<Ok<IEnumerable<DishDto>>>(DishesDbContext dishesDbContext,
 	ClaimsPrincipal claimsPrincipal,
 	[FromQuery] string? name) =>
 {
 	Console.WriteLine($"User authenticated: {claimsPrincipal.Identity?.IsAuthenticated}");
 
-	return (await dishesDbContext.Dishes
+	return TypedResults.Ok((await dishesDbContext.Dishes
 	.Where(d => name == null || d.Name.Contains(name))
-	.ToListAsync()).ToDishDtoList();
+	.ToListAsync()).ToDishDtoList());
 });
 
-app.MapGet("/dishes/{dishId:guid}", async (DishesDbContext dishesDbContext, Guid dishId) =>
+app.MapGet("/dishes/{dishId:guid}", async Task<Results<NotFound, Ok<DishDto>>>(DishesDbContext dishesDbContext, Guid dishId) =>
 {
 	var dishEntity = await dishesDbContext.Dishes.FirstOrDefaultAsync(d => d.Id == dishId);
-	return dishEntity?.ToDishDto();
+	if (dishEntity == null)
+	{
+		return TypedResults.NotFound();
+	}
+	return TypedResults.Ok(dishEntity.ToDishDto());
 });
 
-app.MapGet("/dishes/{dishName}", async (DishesDbContext dishesDbContext, string dishName) =>
+app.MapGet("/dishes/{dishName}", async Task<Results<NotFound, Ok<DishDto>>> (DishesDbContext dishesDbContext, string dishName) =>
 {
 	var dishEntity = (await dishesDbContext.Dishes.FirstOrDefaultAsync(d => d.Name == dishName));
-	return dishEntity?.ToDishDto();
+	if (dishEntity == null)
+	{
+		return TypedResults.NotFound();
+	}
+	return TypedResults.Ok(dishEntity.ToDishDto());
 });
 
-app.MapGet("/dishes/{dishId}/ingredients", async (DishesDbContext dishesDbContext, Guid dishId) =>
+app.MapGet("/dishes/{dishId}/ingredients", async Task<Results<NotFound, Ok<IEnumerable<IngredientDto>>>> (DishesDbContext dishesDbContext, Guid dishId) =>
 {
 	var dishEntity = (await dishesDbContext.Dishes
 		.Include(d => d.Ingredients)
 		.FirstOrDefaultAsync(d => d.Id == dishId));
+	if (dishEntity == null)
+	{
+		return TypedResults.NotFound();
+	}
 
-	return dishEntity?.Ingredients.ToIngredientDtoList(dishId);
+	return TypedResults.Ok(dishEntity?.Ingredients.ToIngredientDtoList(dishId));
 });
 
 
@@ -62,8 +76,3 @@ using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>(
 }
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-	public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
