@@ -35,5 +35,10 @@ namespace DishesAPI.Extensions
 			return ingredients.Select(i => i.ToIngredientDto(dishId));
 		}
 
+
+		public static Dish ToDish(this DishForCreationDto dishForCreationDto)
+		{
+			return new Dish { Name = dishForCreationDto.Name };
+		}
 	}
 }

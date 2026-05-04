@@ -50,7 +50,7 @@ app.MapGet("/dishes/{dishId:guid}", async Task<Results<NotFound, Ok<DishDto>>>(D
 		return TypedResults.NotFound();
 	}
 	return TypedResults.Ok(dishEntity.ToDishDto());
-});
+}).WithName("GetDish");
 
 app.MapGet("/dishes/{dishName}", async Task<Results<NotFound, Ok<DishDto>>> (DishesDbContext dishesDbContext, string dishName) =>
 {
@@ -75,6 +75,18 @@ app.MapGet("/dishes/{dishId}/ingredients", async Task<Results<NotFound, Ok<IEnum
 	return TypedResults.Ok(dishEntity?.Ingredients.ToIngredientDtoList(dishId));
 });
 
+
+app.MapPost("/dishes", async Task<CreatedAtRoute<DishDto>> (
+	DishesDbContext dishesDbContext,
+	[FromBody] DishForCreationDto dishForCreationDto) =>
+{
+	var dishEntity = dishForCreationDto.ToDish();
+	dishesDbContext.Add(dishEntity);
+	await dishesDbContext.SaveChangesAsync();
+	var dishToReturn = dishEntity.ToDishDto();
+
+	return TypedResults.CreatedAtRoute(dishToReturn, "GetDish", new { dishId = dishToReturn.Id });
+});
 
 using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
 {
