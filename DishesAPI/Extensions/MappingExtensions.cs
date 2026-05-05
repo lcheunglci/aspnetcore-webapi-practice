@@ -40,5 +40,10 @@ namespace DishesAPI.Extensions
 		{
 			return new Dish { Name = dishForCreationDto.Name };
 		}
+
+		public static void UpdateFromDto(this Dish dish, DishForUpdateDto dishForUpdateDto)
+		{
+			dish.Name = dishForUpdateDto.Name;
+		}
 	}
 }
