@@ -31,7 +31,7 @@ app.UseHttpsRedirection();
 app.UseStatusCodePages();
 
 
-app.MapGet("/dishes", async Task<Ok<IEnumerable<DishDto>>>(DishesDbContext dishesDbContext,
+app.MapGet("/dishes", async Task<Ok<IEnumerable<DishDto>>> (DishesDbContext dishesDbContext,
 	ClaimsPrincipal claimsPrincipal,
 	[FromQuery] string? name) =>
 {
@@ -42,7 +42,7 @@ app.MapGet("/dishes", async Task<Ok<IEnumerable<DishDto>>>(DishesDbContext dishe
 	.ToListAsync()).ToDishDtoList());
 });
 
-app.MapGet("/dishes/{dishId:guid}", async Task<Results<NotFound, Ok<DishDto>>>(DishesDbContext dishesDbContext, Guid dishId) =>
+app.MapGet("/dishes/{dishId:guid}", async Task<Results<NotFound, Ok<DishDto>>> (DishesDbContext dishesDbContext, Guid dishId) =>
 {
 	var dishEntity = await dishesDbContext.Dishes.FirstOrDefaultAsync(d => d.Id == dishId);
 	if (dishEntity == null)
@@ -98,7 +98,21 @@ app.MapPut("/dishes/{dishId:guid}", async Task<Results<NotFound, NoContent>> (Di
 	dishEntity.UpdateFromDto(dishForUpdateDto);
 	await dishesDbContext.SaveChangesAsync();
 
-	return TypedResults.NoContent();	
+	return TypedResults.NoContent();
+});
+
+app.MapDelete("/dishes/{dishId}", async Task<Results<NotFound, NoContent>> (DishesDbContext dishesDbContext,
+	Guid dishId) =>
+{
+	var dishEntity = await dishesDbContext.Dishes.FirstOrDefaultAsync(d => d.Id == dishId);
+	if (dishEntity == null)
+	{
+		return TypedResults.NotFound();
+	}
+	dishesDbContext.Dishes.Remove(dishEntity);
+	await dishesDbContext.SaveChangesAsync();
+
+	return TypedResults.NoContent();
 });
 
 // recreate & migrate the database on each run, for demo purposes
