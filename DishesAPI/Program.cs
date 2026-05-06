@@ -30,8 +30,18 @@ app.UseHttpsRedirection();
 
 app.UseStatusCodePages();
 
+app.MapGet("/testerror", () =>
+{
+	throw new NotImplementedException();
+});
 
-app.MapGet("/dishes", async Task<Ok<IEnumerable<DishDto>>> (DishesDbContext dishesDbContext,
+
+var dishesEndpoints = app.MapGroup("dishes");
+var dishesWithGuidIdEndpoints = dishesEndpoints.MapGroup("/{dishId:guid}");
+var ingredientsEndpoints = dishesWithGuidIdEndpoints.MapGroup("/ingredients");
+
+
+dishesEndpoints.MapGet("", async Task<Ok<IEnumerable<DishDto>>> (DishesDbContext dishesDbContext,
 	ClaimsPrincipal claimsPrincipal,
 	[FromQuery] string? name) =>
 {
@@ -42,7 +52,7 @@ app.MapGet("/dishes", async Task<Ok<IEnumerable<DishDto>>> (DishesDbContext dish
 	.ToListAsync()).ToDishDtoList());
 });
 
-app.MapGet("/dishes/{dishId:guid}", async Task<Results<NotFound, Ok<DishDto>>> (DishesDbContext dishesDbContext, Guid dishId) =>
+dishesWithGuidIdEndpoints.MapGet("", async Task<Results<NotFound, Ok<DishDto>>> (DishesDbContext dishesDbContext, Guid dishId) =>
 {
 	var dishEntity = await dishesDbContext.Dishes.FirstOrDefaultAsync(d => d.Id == dishId);
 	if (dishEntity == null)
@@ -52,7 +62,7 @@ app.MapGet("/dishes/{dishId:guid}", async Task<Results<NotFound, Ok<DishDto>>> (
 	return TypedResults.Ok(dishEntity.ToDishDto());
 }).WithName("GetDish");
 
-app.MapGet("/dishes/{dishName}", async Task<Results<NotFound, Ok<DishDto>>> (DishesDbContext dishesDbContext, string dishName) =>
+dishesEndpoints.MapGet("/{dishName}", async Task<Results<NotFound, Ok<DishDto>>> (DishesDbContext dishesDbContext, string dishName) =>
 {
 	var dishEntity = (await dishesDbContext.Dishes.FirstOrDefaultAsync(d => d.Name == dishName));
 	if (dishEntity == null)
@@ -62,7 +72,8 @@ app.MapGet("/dishes/{dishName}", async Task<Results<NotFound, Ok<DishDto>>> (Dis
 	return TypedResults.Ok(dishEntity.ToDishDto());
 });
 
-app.MapGet("/dishes/{dishId}/ingredients", async Task<Results<NotFound, Ok<IEnumerable<IngredientDto>>>> (DishesDbContext dishesDbContext, Guid dishId) =>
+ingredientsEndpoints.MapGet("", 
+	async Task<Results<NotFound, Ok<IEnumerable<IngredientDto>>>> (DishesDbContext dishesDbContext, Guid dishId) =>
 {
 	var dishEntity = (await dishesDbContext.Dishes
 		.Include(d => d.Ingredients)
@@ -76,7 +87,7 @@ app.MapGet("/dishes/{dishId}/ingredients", async Task<Results<NotFound, Ok<IEnum
 });
 
 
-app.MapPost("/dishes", async Task<CreatedAtRoute<DishDto>> (DishesDbContext dishesDbContext, [FromBody] DishForCreationDto dishForCreationDto) =>
+dishesEndpoints.MapPost("", async Task<CreatedAtRoute<DishDto>> (DishesDbContext dishesDbContext, [FromBody] DishForCreationDto dishForCreationDto) =>
 {
 	var dishEntity = dishForCreationDto.ToDish();
 	dishesDbContext.Add(dishEntity);
@@ -86,7 +97,7 @@ app.MapPost("/dishes", async Task<CreatedAtRoute<DishDto>> (DishesDbContext dish
 	return TypedResults.CreatedAtRoute(dishToReturn, "GetDish", new { dishId = dishToReturn.Id });
 });
 
-app.MapPut("/dishes/{dishId:guid}", async Task<Results<NotFound, NoContent>> (DishesDbContext dishesDbContext,
+dishesWithGuidIdEndpoints.MapPut("", async Task<Results<NotFound, NoContent>> (DishesDbContext dishesDbContext,
 	Guid dishId,
 	DishForUpdateDto dishForUpdateDto) =>
 {
@@ -101,7 +112,7 @@ app.MapPut("/dishes/{dishId:guid}", async Task<Results<NotFound, NoContent>> (Di
 	return TypedResults.NoContent();
 });
 
-app.MapDelete("/dishes/{dishId}", async Task<Results<NotFound, NoContent>> (DishesDbContext dishesDbContext,
+dishesWithGuidIdEndpoints.MapDelete("", async Task<Results<NotFound, NoContent>> (DishesDbContext dishesDbContext,
 	Guid dishId) =>
 {
 	var dishEntity = await dishesDbContext.Dishes.FirstOrDefaultAsync(d => d.Id == dishId);
