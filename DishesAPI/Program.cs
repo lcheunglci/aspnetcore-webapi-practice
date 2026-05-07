@@ -11,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddProblemDetails();
 
+builder.Services.AddValidation();
+
 // Add services to the container.
 
 // connection string from appSettings
