@@ -14,6 +14,10 @@ builder.Services.AddProblemDetails();
 
 builder.Services.AddValidation();
 
+builder.Services.AddAuthentication().AddJwtBearer();
+
+builder.Services.AddAuthorization();
+
 // Add services to the container.
 
 // connection string from appSettings
@@ -32,6 +36,9 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseStatusCodePages();
+
+// app.UseAuthentication();
+// app.UseAuthorization();
 
 app.MapGet("/testerror", () =>
 {
