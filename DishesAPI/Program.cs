@@ -18,6 +18,13 @@ builder.Services.AddAuthentication().AddJwtBearer();
 
 builder.Services.AddAuthorization();
 
+// use dotnet user-jwts create --audience menu-api --role admin --claim country=Belgium
+builder.Services.AddAuthorizationBuilder()
+	.AddPolicy("RequireAdminFromBelgium", policy => policy.RequireAuthenticatedUser()
+		.RequireClaim("country", "Belgium")
+		.RequireRole("admin")
+	);
+
 // Add services to the container.
 
 // connection string from appSettings
