@@ -6,6 +6,7 @@ using DishesAPI.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,6 +32,8 @@ builder.Services.AddAuthorizationBuilder()
 builder.Services.AddDbContext<DishesDbContext>(o => o.UseSqlite(
 	builder.Configuration["ConnectionStrings:DishesDBConnectionString"]));
 
+builder.Services.AddOpenApi();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -43,6 +46,14 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseStatusCodePages();
+
+// openai/v1 endpoints for OpenAPI spec
+app.MapOpenApi();
+
+if (app.Environment.IsDevelopment())
+{
+	app.MapScalarApiReference();
+}
 
 // app.UseAuthentication();
 // app.UseAuthorization();
