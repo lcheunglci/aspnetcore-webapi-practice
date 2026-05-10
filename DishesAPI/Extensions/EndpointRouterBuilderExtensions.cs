@@ -6,24 +6,39 @@ namespace DishesAPI.Extensions
 	{
 		public static void RegisterDishesEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
 		{
-			var dishesEndpoints = endpointRouteBuilder.MapGroup("dishes").RequireAuthorization();
+			var dishesEndpoints = endpointRouteBuilder.MapGroup("dishes")
+				.RequireAuthorization()
+				.WithTags("Dishes");
 			var dishesWithGuidIdEndpoints = dishesEndpoints.MapGroup("/{dishId:guid}");
 
-
-			dishesEndpoints.MapGet("", DishesHandlers.GetDishesAsync);
-			dishesWithGuidIdEndpoints.MapGet("", DishesHandlers.GetDishByIdAsync).WithName("GetDish");
+			dishesEndpoints.MapGet("", DishesHandlers.GetDishesAsync)
+				.WithSummary("Get all dishes")
+				.WithDescription("Returns all dishes, optionally filtered by name");
+			dishesWithGuidIdEndpoints.MapGet("", DishesHandlers.GetDishByIdAsync)
+				.WithName("GetDish");
 			dishesEndpoints.MapGet("/{dishName}", DishesHandlers.GetDishByNameAsync)
-				.AllowAnonymous();
+				.AllowAnonymous()
+				.WithSummary("Get a dish by name")
+				.WithDescription(
+					"Returns a single dish identified by its name. " +
+					"This endpoint allows anonymous access. ");
 
-			dishesEndpoints.MapPost("", DishesHandlers.CreateDishAsync);
-			dishesWithGuidIdEndpoints.MapPut("", DishesHandlers.UpdateDishAsync);
-			dishesWithGuidIdEndpoints.MapDelete("", DishesHandlers.DeleteDishAsync);
+			dishesEndpoints.MapPost("", DishesHandlers.CreateDishAsync)
+				.WithSummary("Create a dish")
+				.WithDescription("Creates a new dish. Requires the admin role and country Belgium")
+				.ProducesValidationProblem(400);
+
+			dishesWithGuidIdEndpoints.MapPut("", DishesHandlers.UpdateDishAsync)
+				.WithSummary("Updates a dish");
+			dishesWithGuidIdEndpoints.MapDelete("", DishesHandlers.DeleteDishAsync)
+				.WithSummary("Removes a dish");
 		}
 
 		public static void RegisterIngredientsEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
 		{
 			var ingredientsEndpoints = endpointRouteBuilder.MapGroup("/dishes/{dishId:guid}/ingredients")
-				.RequireAuthorization();
+				.RequireAuthorization()
+				.WithTags("Ingredients");
 			ingredientsEndpoints.MapGet("", IngredientsHandlers.GetIngredientsAsync);
 		}
 	}
