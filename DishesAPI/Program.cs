@@ -1,13 +1,8 @@
-﻿using System.Security.Claims;
-using DishesAPI.DbContexts;
-using DishesAPI.EndpointHandlers;
+﻿using DishesAPI.DbContexts;
 using DishesAPI.Extensions;
-using DishesAPI.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
 using Scalar.AspNetCore;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +27,34 @@ builder.Services.AddAuthorizationBuilder()
 builder.Services.AddDbContext<DishesDbContext>(o => o.UseSqlite(
 	builder.Configuration["ConnectionStrings:DishesDBConnectionString"]));
 
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+	options.AddDocumentTransformer((document, context, cancellationToken) =>
+	{
+		document.Info = new OpenApiInfo
+		{
+			Title = "Dishes API",
+			Description = "An API to manage dishes and their ingredients.",
+			Version = "v1"
+		};
+		document.Components ??= new OpenApiComponents();
+		document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
+		document.Components.SecuritySchemes["Bearer"] = new OpenApiSecurityScheme
+		{
+			Type = SecuritySchemeType.Http,
+			Scheme = "Bearer",
+			BearerFormat = "JWT",
+			Description = "Enter a valid JWT bearer token"
+		};
+		document.Security ??= [];
+		document.Security.Add(new OpenApiSecurityRequirement
+		{
+			[new OpenApiSecuritySchemeReference("Bearer")] = new List<string>()
+
+		});
+		return Task.CompletedTask;
+	});
+});
 
 var app = builder.Build();
 
