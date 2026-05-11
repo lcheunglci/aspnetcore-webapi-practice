@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Books.Legacy", "Books.Legac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DishesAPI", "DishesAPI\DishesAPI.csproj", "{F3D64B8B-A7C5-445F-BAD6-37B3369E591B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityInfo.API", "CityInfo.API\CityInfo.API.csproj", "{119878F8-FF1D-4B84-9BD3-C058AD89C230}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{F3D64B8B-A7C5-445F-BAD6-37B3369E591B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3D64B8B-A7C5-445F-BAD6-37B3369E591B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3D64B8B-A7C5-445F-BAD6-37B3369E591B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{119878F8-FF1D-4B84-9BD3-C058AD89C230}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{119878F8-FF1D-4B84-9BD3-C058AD89C230}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{119878F8-FF1D-4B84-9BD3-C058AD89C230}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{119878F8-FF1D-4B84-9BD3-C058AD89C230}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
