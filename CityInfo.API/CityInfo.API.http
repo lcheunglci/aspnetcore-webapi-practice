@@ -1,4 +1,4 @@
-@baseUrl = https://localhost:7169
+@baseUrl = https://localhost:7164
 @cityId = 1
 @pointOfInterestId = 1
 
