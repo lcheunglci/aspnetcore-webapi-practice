@@ -7,29 +7,9 @@ namespace CityInfo.API.Controllers
 	public class CitiesController : ControllerBase
 	{
 		[HttpGet()]
-		public JsonResult GetCtities()
+		public JsonResult GetCities()
 		{
-			return new JsonResult(new []
-			{
-				new
-				{
-					Id = 1,
-					Name = "New York City",
-					Description = "The one with that big park."
-				},
-				new
-				{
-					Id = 2,
-					Name = "Tokyo",
-					Description = "The land of the rising sun."
-				},
-				new
-				{
-					Id = 3,
-					Name = "Paris",
-					Description = "The one with that big tower."
-				}
-			});
+			return new JsonResult(CitiesDataStore.Current.Cities);
 		}
 	}
 }
