@@ -8,7 +8,7 @@ namespace CityInfo.API.Controllers
 	public class FileController(FileExtensionContentTypeProvider fileExtensionContentTypeProvider) : ControllerBase
 	{
 		[HttpGet("{fileId}")]
-		public ActionResult GetFile(string fileId)
+		public async Task<ActionResult> GetFile(string fileId)
 		{
 			// look up the actual file, depending on the fileId
 			// demo code
@@ -25,7 +25,7 @@ namespace CityInfo.API.Controllers
 				contentType = "application/octet-stream";
 			}
 
-			var bytes = System.IO.File.ReadAllBytes(pathToFile);
+			var bytes = await System.IO.File.ReadAllBytesAsync(pathToFile);
 			return File(bytes, contentType, Path.GetFileName(pathToFile));
 		}
 	}
