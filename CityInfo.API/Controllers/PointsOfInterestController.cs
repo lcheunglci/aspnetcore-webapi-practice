@@ -53,8 +53,25 @@ namespace CityInfo.API.Controllers
 				Description = pointOfInterst.Description
 			};
 			city.PointsOfInterest.Add(finalPointOfInterest);
-			return CreatedAtRoute("GetPointOfInterest", 
+			return CreatedAtRoute("GetPointOfInterest",
 				new { cityId, pointOfInterestId = finalPointOfInterest.Id }, finalPointOfInterest);
+		}
+
+		[HttpDelete("{pointOfInterestId}")]
+		public ActionResult DeletePointOfInterest(int cityId, int pointOfInterestId)
+		{
+			var city = CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == cityId);
+			if (city == null)
+			{
+				return NotFound();
+			}
+			var pointOfInterest = city.PointsOfInterest.FirstOrDefault(p => p.Id == pointOfInterestId);
+			if (pointOfInterest == null)
+			{
+				return NotFound();
+			}
+			city.PointsOfInterest.Remove(pointOfInterest);
+			return NoContent();
 		}
 	}
 }
