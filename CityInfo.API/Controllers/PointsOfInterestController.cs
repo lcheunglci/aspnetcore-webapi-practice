@@ -8,7 +8,7 @@ namespace CityInfo.API.Controllers
 {
 	[Route("api/cities/{cityId}/pointsofinterest")]
 	[ApiController]
-	public class PointsOfInterestController(ILogger<PointsOfInterestController> logger, LocalMailService mailService) : ControllerBase
+	public class PointsOfInterestController(ILogger<PointsOfInterestController> logger, IMailService mailService) : ControllerBase
 	{
 		[HttpGet]
 		public ActionResult<IEnumerable<Models.PointOfInterestDto>> GetPointsOfInterest(int cityId)

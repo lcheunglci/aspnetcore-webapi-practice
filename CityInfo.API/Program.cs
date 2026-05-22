@@ -20,7 +20,11 @@ builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = 
 
 builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
 
-builder.Services.AddTransient<LocalMailService>();
+#if DEBUG
+builder.Services.AddTransient<IMailService, LocalMailService>();
+#else
+builder.Services.AddTransient<IMailService, CloudMailService>();
+#endif
 
 var app = builder.Build();
 
