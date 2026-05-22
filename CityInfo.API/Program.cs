@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.StaticFiles;
+﻿using CityInfo.API.Services;
+using Microsoft.AspNetCore.StaticFiles;
 
 var builder = WebApplication.CreateBuilder(args);
 // builder.Logging.ClearProviders();
@@ -18,6 +19,8 @@ builder.Services.AddProblemDetails(options => options.CustomizeProblemDetails = 
 });
 
 builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
+
+builder.Services.AddTransient<LocalMailService>();
 
 var app = builder.Build();
 
