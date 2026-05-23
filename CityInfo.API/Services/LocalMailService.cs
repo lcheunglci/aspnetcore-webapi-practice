@@ -1,9 +1,11 @@
 ﻿namespace CityInfo.API.Services
 {
-	public class LocalMailService : IMailService
+	public class LocalMailService(IConfiguration configuration) : IMailService
 	{
-		private string _mailTo = "admin@mycompany.com";
-		private string _mailFrom = "noreply@mycompany.com";
+		private string _mailTo = configuration["mailSettings:mailToAddress"] 
+			?? throw new ArgumentNullException("mailSettings:mailToAddress");
+		private string _mailFrom = configuration["mailSettings:mailFromAddress"] 
+			?? throw new ArgumentNullException("mailSettings:mailFromAddress");
 
 		public void Send(string subject, string message)
 		{
