@@ -1,0 +1,48 @@
+@booksApi = https://localhost:51491
+@bookCoversApi = https://localhost:52644
+
+### Get all books (controller)
+GET {{booksApi}}/api/books
+
+### Get a single book (controller)
+GET {{booksApi}}/api/books/5b1c2b4d-48c7-402a-80c3-cc796ad49c6b
+
+### Get all books (Minimal API)
+GET {{booksApi}}/api/minimal/books
+
+### Get a single book (Minimal API)
+GET {{booksApi}}/api/minimal/books/5b1c2b4d-48c7-402a-80c3-cc796ad49c6b
+
+### Create a book
+POST {{booksApi}}/api/books
+Content-Type: application/json
+
+{
+  "authorId": "24810dfc-2d94-4cc7-aab5-cdf98b83f0c9",
+  "title": "The Cold Six Thousand",
+  "description": "The Cold Six Thousand is the first sequel to American Tabloid."
+}
+
+### Stream books (controller) — watch items arrive one by one
+GET {{booksApi}}/api/booksstream
+
+### Stream books (Minimal API)
+GET {{booksApi}}/api/minimal/booksstream
+
+### Get a single book cover from the BookCovers API directly
+GET {{bookCoversApi}}/api/bookcovers/test-dummycover1
+
+### Get a single book cover — with fault simulation
+GET {{bookCoversApi}}/api/bookcovers/test-dummycover1?returnFault=true
+
+### Get book covers via Books API (sequential vs concurrent — switch in code)
+GET {{booksApi}}/api/books/5b1c2b4d-48c7-402a-80c3-cc796ad49c6b/bookcovers
+
+### Get a book with covers (combined response)
+GET {{booksApi}}/api/books/5b1c2b4d-48c7-402a-80c3-cc796ad49c6b
+
+### Get books — purely synchronous (baseline)
+GET {{booksApi}}/api/books/sync
+
+### Get books — sync-over-async BAD CODE (.Result)
+GET {{booksApi}}/api/books/syncoverasync

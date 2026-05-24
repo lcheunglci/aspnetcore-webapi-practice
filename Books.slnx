@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="BookCovers.API/BookCovers.API.csproj" />
+  <Project Path="Books.API/Books.API.csproj" />
+  <Project Path="Books.Legacy/Books.Legacy.csproj" />
+</Solution>
