@@ -9,10 +9,13 @@ builder.Services.AddControllers();
 
 // register the DbContext on the container 
 builder.Services.AddDbContext<BooksContext>(options =>
-    options.UseSqlite(
-        builder.Configuration["ConnectionStrings:BooksDBConnectionString"]));
+	options.UseSqlite(
+		builder.Configuration["ConnectionStrings:BooksDBConnectionString"]));
 
 builder.Services.AddScoped<IBooksRepository, BooksRepository>();
+
+builder.Services.AddAutoMapper(config => { },
+	AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
