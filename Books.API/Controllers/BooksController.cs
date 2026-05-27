@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Books.API.Services;
 using Microsoft.AspNetCore.Mvc;
+using Books.API.Models;
 
 namespace Books.API.Controllers
 {
@@ -18,7 +19,7 @@ namespace Books.API.Controllers
 		public async Task<IActionResult> GetBooks()
 		{
 			var bookEntity = await _booksRepository.GetBooksAsync();
-			return Ok(_mapper.Map<IEnumerable<Models.BookDto>>(bookEntity));
+			return Ok(_mapper.Map<IEnumerable<BookDto>>(bookEntity));
 		}
 
 
@@ -30,7 +31,20 @@ namespace Books.API.Controllers
 			{
 				return NotFound();
 			}
-			return Ok(_mapper.Map<Models.BookDto>(bookEntity));
+			return Ok(_mapper.Map<BookDto>(bookEntity));
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> CreateBook([FromBody] BookForCreationDto book)
+		{
+			var bookEntity = _mapper.Map<Entities.Book>(book);
+			_booksRepository.AddBook(bookEntity);
+			await _booksRepository.SaveChangesAsync();
+
+			// fetch the book from the data store (including the author)
+			var bookFromRepo = _mapper.Map<Models.BookDto>(bookEntity);
+
+			return CreatedAtRoute("GetBook", new { id = bookFromRepo.Id }, _mapper.Map<BookDto>(bookFromRepo));
 		}
 	}
 }
