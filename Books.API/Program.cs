@@ -11,9 +11,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 // register the DbContext on the container 
+//builder.Services.AddDbContext<BooksContext>(options =>
+//	options.UseSqlite(
+//		builder.Configuration["ConnectionStrings:BooksDBConnectionString"]));
+
 builder.Services.AddDbContext<BooksContext>(options =>
-	options.UseSqlite(
+	options.UseSqlServer(
 		builder.Configuration["ConnectionStrings:BooksDBConnectionString"]));
+
 
 builder.Services.AddScoped<IBooksRepository, BooksRepository>();
 
@@ -27,15 +32,15 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapGet("api/minimal/books", async (IBooksRepository repo, IMapper mapper) =>
+app.MapGet("api/minimal/books", async (IBooksRepository repo, IMapper mapper, CancellationToken cancellationToken) =>
 {
-	var bookEntities = await repo.GetBooksAsync();
+	var bookEntities = await repo.GetBooksAsync(cancellationToken);
 	return Results.Ok(mapper.Map<IEnumerable<BookDto>>(bookEntities));
 });
 
-app.MapGet("api/minimal/books/{id:guid}", async Task<Results<Ok<BookDto>, NotFound>> (Guid id, IBooksRepository repo, IMapper mapper) =>
+app.MapGet("api/minimal/books/{id:guid}", async Task<Results<Ok<BookDto>, NotFound>> (Guid id, IBooksRepository repo, IMapper mapper, CancellationToken cancellationToken) =>
 {
-	var bookEntity = await repo.GetBookAsync(id);
+	var bookEntity = await repo.GetBookAsync(id, cancellationToken);
 	if (bookEntity == null)
 		return TypedResults.NotFound();
 	return TypedResults.Ok(mapper.Map<BookDto>(bookEntity));

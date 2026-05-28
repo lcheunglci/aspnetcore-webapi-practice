@@ -8,7 +8,7 @@ public class BooksContextFactory : IDesignTimeDbContextFactory<BooksContext>
     public BooksContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<BooksContext>();
-        optionsBuilder.UseSqlite("Data Source=books.db"); // Update with your connection string if needed
+        optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=BooksDB;Trusted_Connection=True;"); // Update with your connection string if needed
         return new BooksContext(optionsBuilder.Options);
     }
 }

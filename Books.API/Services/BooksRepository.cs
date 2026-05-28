@@ -14,24 +14,24 @@ namespace Books.API.Services
 			_context.Add(bookToAdd);
 		}
 
-		public async Task<Book?> GetBookAsync(Guid id)
+		public async Task<Book?> GetBookAsync(Guid id, CancellationToken cancellationToken)
 		{
 			return await _context.Books
 				.Include(b => b.Author)
-				.FirstOrDefaultAsync(b => b.Id == id);
+				.FirstOrDefaultAsync(b => b.Id == id, cancellationToken);
 		}
 
-		public async Task<IEnumerable<Book>> GetBooksAsync()
+		public async Task<IEnumerable<Book>> GetBooksAsync(CancellationToken cancellationToken)
 		{
 			return await _context.Books
 				.Include(b => b.Author)
-				.ToListAsync();
+				.ToListAsync(cancellationToken);
 
 		}
 
-		public async Task<bool> SaveChangesAsync()
+		public async Task<bool> SaveChangesAsync(CancellationToken cancellationToken)
 		{
-			return (await _context.SaveChangesAsync()) > 0;
+			return (await _context.SaveChangesAsync(cancellationToken)) > 0;
 		}
 	}
 }

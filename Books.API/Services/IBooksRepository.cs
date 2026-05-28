@@ -2,10 +2,10 @@
 {
 	public interface IBooksRepository
 	{
-		Task<IEnumerable<Entities.Book>> GetBooksAsync();
-		Task<Entities.Book?> GetBookAsync(Guid id);
+		Task<IEnumerable<Entities.Book>> GetBooksAsync(CancellationToken cancellationToken);
+		Task<Entities.Book?> GetBookAsync(Guid id, CancellationToken cancellationToken);
 		void AddBook(Entities.Book bookToAdd);
-		Task<bool> SaveChangesAsync();
+		Task<bool> SaveChangesAsync(CancellationToken cancellationToken);
 
 	}
 }

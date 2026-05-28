@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using Books.API.Models;
 using Books.API.Services;
 using Microsoft.AspNetCore.Mvc;
-using Books.API.Models;
 
 namespace Books.API.Controllers
 {
@@ -16,17 +16,22 @@ namespace Books.API.Controllers
 		private readonly ILogger<BooksController> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
 		[HttpGet()]
-		public async Task<IActionResult> GetBooks()
+		public async Task<IActionResult> GetBooks(CancellationToken cancellationToken)
 		{
-			var bookEntity = await _booksRepository.GetBooksAsync();
+			var bookEntity = await _booksRepository.GetBooksAsync(cancellationToken);
 			return Ok(_mapper.Map<IEnumerable<BookDto>>(bookEntity));
 		}
 
 
 		[HttpGet("{id:guid}", Name = "GetBook")]
-		public async Task<IActionResult> GetBook(Guid id)
+		public async Task<IActionResult> GetBook(Guid id, CancellationToken cancellationToken)
 		{
-			var bookEntity = await _booksRepository.GetBookAsync(id);
+			_logger.LogInformation(
+				"[{Timestamp}] GetBook entered - ThreadId {ThreadId}", DateTime.UtcNow.ToString("HH:mm:ss.fff"), Environment.CurrentManagedThreadId);
+
+			Thread.Sleep(5000); // simulate a long-running operation
+
+			var bookEntity = await _booksRepository.GetBookAsync(id, cancellationToken);
 			if (bookEntity == null)
 			{
 				return NotFound();
@@ -35,11 +40,11 @@ namespace Books.API.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> CreateBook([FromBody] BookForCreationDto book)
+		public async Task<IActionResult> CreateBook([FromBody] BookForCreationDto book, CancellationToken cancellationToken)
 		{
 			var bookEntity = _mapper.Map<Entities.Book>(book);
 			_booksRepository.AddBook(bookEntity);
-			await _booksRepository.SaveChangesAsync();
+			await _booksRepository.SaveChangesAsync(cancellationToken);
 
 			// fetch the book from the data store (including the author)
 			var bookFromRepo = _mapper.Map<Models.BookDto>(bookEntity);
