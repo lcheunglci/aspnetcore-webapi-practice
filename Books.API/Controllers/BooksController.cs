@@ -18,8 +18,31 @@ namespace Books.API.Controllers
 		[HttpGet()]
 		public async Task<IActionResult> GetBooks(CancellationToken cancellationToken)
 		{
-			var bookEntity = await _booksRepository.GetBooksAsync(cancellationToken);
-			return Ok(_mapper.Map<IEnumerable<BookDto>>(bookEntity));
+			using var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+			using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(timeoutCts.Token, cancellationToken);
+
+			try
+			{
+				var bookEntity = await _booksRepository.GetBooksAsync(linkedTokenSource.Token);
+				return Ok(_mapper.Map<IEnumerable<BookDto>>(bookEntity));
+			}
+			catch (OperationCanceledException)
+			{
+				if (cancellationToken.IsCancellationRequested) {
+					// client disconnect
+					throw;
+				}
+				else if (timeoutCts.IsCancellationRequested)
+				{
+					// timeout elapsed
+					_logger.LogWarning(
+						"[{Timestamp}] GetBooks operation timed out - ThreadId {ThreadId}", DateTime.UtcNow.ToString("HH:mm:ss.fff"), Environment.CurrentManagedThreadId);
+					// return StatusCode(StatusCodes.Status504GatewayTimeout, "The request timed out.");
+					throw;
+				}
+
+			}
+			return StatusCode(StatusCodes.Status500InternalServerError);
 		}
 
 
