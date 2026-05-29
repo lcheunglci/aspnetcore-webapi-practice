@@ -28,7 +28,8 @@ namespace Books.API.Controllers
 			}
 			catch (OperationCanceledException)
 			{
-				if (cancellationToken.IsCancellationRequested) {
+				if (cancellationToken.IsCancellationRequested)
+				{
 					// client disconnect
 					throw;
 				}
@@ -49,17 +50,28 @@ namespace Books.API.Controllers
 		[HttpGet("{id:guid}", Name = "GetBook")]
 		public async Task<IActionResult> GetBook(Guid id, CancellationToken cancellationToken)
 		{
-			_logger.LogInformation(
-				"[{Timestamp}] GetBook entered - ThreadId {ThreadId}", DateTime.UtcNow.ToString("HH:mm:ss.fff"), Environment.CurrentManagedThreadId);
 
 			Thread.Sleep(5000); // simulate a long-running operation
-
-			var bookEntity = await _booksRepository.GetBookAsync(id, cancellationToken);
-			if (bookEntity == null)
+			try
 			{
-				return NotFound();
+				_logger.LogInformation(
+					"[{Timestamp}] GetBook entered - ThreadId {ThreadId}", 
+					DateTime.UtcNow.ToString("HH:mm:ss.fff"), 
+					Environment.CurrentManagedThreadId);
+
+				var bookEntity = await _booksRepository.GetBookAsync(id, cancellationToken);
+				if (bookEntity == null)
+				{
+					return NotFound();
+				}
+				return Ok(_mapper.Map<BookDto>(bookEntity));
 			}
-			return Ok(_mapper.Map<BookDto>(bookEntity));
+			catch (OperationCanceledException)
+			{
+				_logger.LogInformation(
+					"GetBook request was cancelled.");
+				return StatusCode(499); // ensure the client receives a response indicating the request was cancelled
+			}
 		}
 
 		[HttpPost]
