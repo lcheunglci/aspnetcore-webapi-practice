@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Books.API.ExportWriters;
 using Books.API.Models;
 using Books.API.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -86,5 +87,24 @@ namespace Books.API.Controllers
 
 			return CreatedAtRoute("GetBook", new { id = bookFromRepo.Id }, _mapper.Map<BookDto>(bookFromRepo));
 		}
-	}
+
+		[HttpPost("export")]
+		public async Task<IActionResult> ExportBooks(CancellationToken cancellationToken)
+		{
+			var exportFilePath = Path.Combine(Path.GetTempPath(), $"books_export_{DateTime.UtcNow:yyyyMMddHHmmss}.csv");
+
+			
+			await using var writer = new BookExportWriter(exportFilePath);
+			var books = await _booksRepository.GetBooksAsync(cancellationToken);
+			foreach (var book in books)
+			{
+				cancellationToken.ThrowIfCancellationRequested();
+				var bookDto = _mapper.Map<BookDto>(book);
+				await writer.WriteBookAsync(bookDto, cancellationToken);
+			}
+			//var fileBytes = await System.IO.File.ReadAllBytesAsync(exportFilePath, cancellationToken);
+			//System.IO.File.Delete(exportFilePath); // clean up the temporary file
+			//return File(fileBytes, "text/csv", "books_export.csv");
+			return Ok($"Exported to {exportFilePath}");
+		}
 }
