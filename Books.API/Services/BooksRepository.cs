@@ -29,6 +29,13 @@ namespace Books.API.Services
 
 		}
 
+		public IAsyncEnumerable<Book> GetBooksAsyncEnumerable()
+		{
+			return _context.Books
+				.Include(b => b.Author)
+				.AsAsyncEnumerable();
+		}
+
 		public async Task<bool> SaveChangesAsync(CancellationToken cancellationToken)
 		{
 			return (await _context.SaveChangesAsync(cancellationToken)) > 0;

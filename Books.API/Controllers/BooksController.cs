@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Runtime.CompilerServices;
+using AutoMapper;
 using Books.API.ExportWriters;
 using Books.API.Models;
 using Books.API.Services;
@@ -56,8 +57,8 @@ namespace Books.API.Controllers
 			try
 			{
 				_logger.LogInformation(
-					"[{Timestamp}] GetBook entered - ThreadId {ThreadId}", 
-					DateTime.UtcNow.ToString("HH:mm:ss.fff"), 
+					"[{Timestamp}] GetBook entered - ThreadId {ThreadId}",
+					DateTime.UtcNow.ToString("HH:mm:ss.fff"),
 					Environment.CurrentManagedThreadId);
 
 				var bookEntity = await _booksRepository.GetBookAsync(id, cancellationToken);
@@ -93,7 +94,7 @@ namespace Books.API.Controllers
 		{
 			var exportFilePath = Path.Combine(Path.GetTempPath(), $"books_export_{DateTime.UtcNow:yyyyMMddHHmmss}.csv");
 
-			
+
 			await using var writer = new BookExportWriter(exportFilePath);
 			var books = await _booksRepository.GetBooksAsync(cancellationToken);
 			foreach (var book in books)
@@ -107,4 +108,17 @@ namespace Books.API.Controllers
 			//return File(fileBytes, "text/csv", "books_export.csv");
 			return Ok($"Exported to {exportFilePath}");
 		}
+
+		[HttpGet("booksstream")]
+		public async IAsyncEnumerable<BookDto> GetBooksStream(
+			[EnumeratorCancellation] CancellationToken cancellationToken)
+		{
+			await foreach (var book in _booksRepository.GetBooksAsyncEnumerable().WithCancellation(cancellationToken))
+			{
+				await Task.Delay(500, cancellationToken); // simulate some processing delay
+				yield return _mapper.Map<BookDto>(book);
+			}
+
+		}
+	}
 }
