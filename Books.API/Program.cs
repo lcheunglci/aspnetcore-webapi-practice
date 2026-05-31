@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Runtime.CompilerServices;
+using AutoMapper;
 using Books.API.DbContexts;
 using Books.API.Models;
 using Books.API.Services;
@@ -44,6 +45,18 @@ app.MapGet("api/minimal/books/{id:guid}", async Task<Results<Ok<BookDto>, NotFou
 	if (bookEntity == null)
 		return TypedResults.NotFound();
 	return TypedResults.Ok(mapper.Map<BookDto>(bookEntity));
+});
+
+app.MapGet("api/minimal/booksstream", async (IBooksRepository repo, IMapper mapper, CancellationToken cancellationToken) =>
+{
+	return StreamBooks(repo, mapper, cancellationToken);
+	static async IAsyncEnumerable<BookDto> StreamBooks(IBooksRepository repo, IMapper mapper, [EnumeratorCancellation] CancellationToken cancellationToken)
+	{
+		await foreach (var bookEntity in repo.GetBooksAsyncEnumerable().WithCancellation(cancellationToken))
+		{
+			yield return mapper.Map<BookDto>(bookEntity);
+		}
+	}
 });
 
 app.Run();

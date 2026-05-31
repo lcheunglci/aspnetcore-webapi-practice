@@ -110,7 +110,7 @@ namespace Books.API.Controllers
 		}
 
 		[HttpGet("booksstream")]
-		public async IAsyncEnumerable<BookDto> GetBooksStream(
+		public async IAsyncEnumerable<BookDto> StreamBooks(
 			[EnumeratorCancellation] CancellationToken cancellationToken)
 		{
 			await foreach (var book in _booksRepository.GetBooksAsyncEnumerable().WithCancellation(cancellationToken))
