@@ -26,6 +26,12 @@ builder.Services.AddScoped<IBooksRepository, BooksRepository>();
 builder.Services.AddAutoMapper(config => { },
 	AppDomain.CurrentDomain.GetAssemblies());
 
+builder.Services.AddHttpClient("BookCoversAPI", client =>
+{
+	// client.BaseAddress = new Uri(builder.Configuration["BookCoversAPI:BaseUrl"]!);
+	client.BaseAddress = new Uri("https://localhost:52644");
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
