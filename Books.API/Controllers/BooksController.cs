@@ -120,5 +120,17 @@ namespace Books.API.Controllers
 			}
 
 		}
+
+		[HttpGet("bookcovers/{id}")]
+		public async Task<IActionResult> GetBookCover(string id, CancellationToken cancellationToken)
+		{
+			var bookCover = await _booksRepository.GetBookCoverAsync(id, cancellationToken);
+			if (bookCover == null)
+			{
+				return NotFound();
+			}
+			// return File(bookCover.Content, "image/jpeg");
+			return Ok(_mapper.Map<BookCoverDto>(bookCover));
+		}
 	}
 }
