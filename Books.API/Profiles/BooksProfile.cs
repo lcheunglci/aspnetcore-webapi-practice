@@ -14,6 +14,9 @@ namespace Books.API.Profiles
 
 			CreateMap<BookForCreationDto, Book>()
 				.ConstructUsing(src => new Book(Guid.NewGuid(), src.AuthorId, src.Title, src.Description));
+
+			CreateMap<Models.External.BookCoverDto, BookCoverDto>()
+				.ConstructUsing(src => new BookCoverDto(src.Id, src.Content));
 		}
 	}
 }
