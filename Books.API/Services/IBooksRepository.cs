@@ -8,5 +8,7 @@
 		Task<bool> SaveChangesAsync(CancellationToken cancellationToken);
 		IAsyncEnumerable<Entities.Book> GetBooksAsyncEnumerable();
 
+		Task<Models.External.BookCoverDto?> GetBookCoverAsync(string id, CancellationToken cancellationToken);
+
 	}
 }
