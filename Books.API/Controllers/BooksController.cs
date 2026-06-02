@@ -122,15 +122,37 @@ namespace Books.API.Controllers
 		}
 
 		[HttpGet("bookcovers/{id}")]
-		public async Task<IActionResult> GetBookCover(string id, CancellationToken cancellationToken)
+		public async Task<IActionResult> GetBookCover(Guid id, CancellationToken cancellationToken)
 		{
 			var bookCover = await _booksRepository.GetBookCoverAsync(id, cancellationToken);
 			if (bookCover == null)
 			{
 				return NotFound();
 			}
-			// return File(bookCover.Content, "image/jpeg");
+			// return File(bookCovers.Content, "image/jpeg");
 			return Ok(_mapper.Map<BookCoverDto>(bookCover));
 		}
+
+		[HttpGet("{id}/bookcovers")]
+		public async Task<IActionResult> GetBookCovers(Guid id, CancellationToken cancellationToken)
+		{
+			var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+			var bookCovers = await _booksRepository.GetBookCoverOneByOneAsync(id, cancellationToken);
+			// var bookCovers = await _booksRepository.GetBookCoversAfterWaitForAllAsync(id, cancellationToken);
+			stopwatch.Stop();
+			_logger.LogInformation(
+				"[{Timestamp}] GetBookCovers completed in {ElapsedMilliseconds} ms - ThreadId {ThreadId}",
+				DateTime.UtcNow.ToString("HH:mm:ss.fff"),
+				stopwatch.ElapsedMilliseconds,
+				Environment.CurrentManagedThreadId);
+			if (bookCovers == null)
+			{
+				return NotFound();
+			}
+			
+			return Ok(bookCovers);
+		}
+
 	}
 }

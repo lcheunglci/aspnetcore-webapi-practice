@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace BookCovers.API.Controllers;
 
@@ -18,13 +18,20 @@ public class BookCoversController : ControllerBase
             return new StatusCodeResult(500);
         }
 
-        // generate a "book cover" (byte array) between 5 and 10MB
-        var random = new Random();
-        int fakeCoverBytes = random.Next(5097152, 10485760);
-        byte[] fakeCover = new byte[fakeCoverBytes];
-        random.NextBytes(fakeCover);
+		// simulate latency
+		await Task.Delay(1000);
 
-        return Ok(new
+		// generate a "book cover" (byte array) between 5 and 10MB
+		//var random = new Random();
+		//int fakeCoverBytes = random.Next(5097152, 10485760);
+		//byte[] fakeCover = new byte[fakeCoverBytes];
+		//random.NextBytes(fakeCover);
+		var random = new Random();
+		byte[] fakeCover = new byte[5097152];
+		random.NextBytes(fakeCover);
+
+
+		return Ok(new
         {
             Id = id,
             Content = fakeCover

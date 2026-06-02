@@ -1,4 +1,5 @@
-﻿using Books.API.DbContexts;
+﻿using System.Text.Json;
+using Books.API.DbContexts;
 using Books.API.Entities;
 using Books.API.Models.External;
 using Microsoft.EntityFrameworkCore;
@@ -63,6 +64,79 @@ namespace Books.API.Services
 			{
 				return null;
 			}
+		}
+
+		public async Task<IEnumerable<BookCoverDto>> GetBookCoverOneByOneAsync(Guid bookId, CancellationToken cancellationToken)
+		{
+			var httpClient = _httpClientFactory.CreateClient("BookCoversAPI");
+			var bookCovers = new List<BookCoverDto>();
+			var bookCoverUrls = new[]
+			{
+				$"api/bookcovers/{bookId}-dummycover1",
+				$"api/bookcovers/{bookId}-dummycover2",
+				$"api/bookcovers/{bookId}-dummycover3",
+				$"api/bookcovers/{bookId}-dummycover4",
+				$"api/bookcovers/{bookId}-dummycover5"
+			};
+
+			foreach (var bookCoverUrl in bookCoverUrls)
+			{
+				var response = httpClient.GetAsync(bookCoverUrl, cancellationToken).GetAwaiter().GetResult();
+				if (response.IsSuccessStatusCode)
+				{
+					var bookCover = JsonSerializer.Deserialize<BookCoverDto>(
+						await response.Content.ReadAsStringAsync(cancellationToken),
+						new JsonSerializerOptions
+						{
+							PropertyNameCaseInsensitive = true
+						});
+
+					// var bookCover = response.Content.ReadFromJsonAsync<BookCoverDto>(cancellationToken: cancellationToken).GetAwaiter().GetResult();
+					if (bookCover != null)
+					{
+						bookCovers.Add(bookCover);
+					}
+				}
+			}
+			return bookCovers;
+		}
+
+		public async Task<IEnumerable<BookCoverDto>> GetBookCoversAfterWaitForAllAsync(Guid bookId, CancellationToken cancellationToken)
+		{
+			var httpClient = _httpClientFactory.CreateClient("BookCoversAPI");
+			var bookCovers = new List<BookCoverDto>();
+			var bookCoverUrls = new[]
+			{
+				$"api/bookcovers/{bookId}-dummycover1",
+				$"api/bookcovers/{bookId}-dummycover2",
+				$"api/bookcovers/{bookId}-dummycover3",
+				$"api/bookcovers/{bookId}-dummycover4",
+				$"api/bookcovers/{bookId}-dummycover5"
+			};
+			var bookCoverTasks = new List<Task<HttpResponseMessage>>();
+			foreach (var bookCoverUrl in bookCoverUrls)
+			{
+				bookCoverTasks.Add(httpClient.GetAsync(bookCoverUrl, cancellationToken));
+			}
+			var bookCoverTaskResults = await Task.WhenAll(bookCoverTasks);
+			foreach (var bookCoverTaskResult in bookCoverTaskResults)
+			{
+				if (bookCoverTaskResult.IsSuccessStatusCode)
+				{
+					var bookCover = JsonSerializer.Deserialize<BookCoverDto>(
+						await bookCoverTaskResult.Content.ReadAsStringAsync(cancellationToken),
+						new JsonSerializerOptions
+						{
+							PropertyNameCaseInsensitive = true
+						});
+					// var bookCover = await bookCoverTaskResult.Content.ReadFromJsonAsync<BookCoverDto>(cancellationToken: cancellationToken);
+					if (bookCover != null)
+					{
+						bookCovers.Add(bookCover);
+					}
+				}
+			}
+			return bookCovers;
 		}
 	}
 }
