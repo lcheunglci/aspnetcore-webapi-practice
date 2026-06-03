@@ -73,11 +73,15 @@ namespace Books.API.Services
 			var bookCoverUrls = new[]
 			{
 				$"api/bookcovers/{bookId}-dummycover1",
-				$"api/bookcovers/{bookId}-dummycover2",
+				$"api/bookcovers/{bookId}-dummycover2?returnFault=true",
+				// $"api/bookcovers/{bookId}-dummycover2",
 				$"api/bookcovers/{bookId}-dummycover3",
 				$"api/bookcovers/{bookId}-dummycover4",
 				$"api/bookcovers/{bookId}-dummycover5"
 			};
+
+			using var localCts = new CancellationTokenSource();
+			using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(localCts.Token, cancellationToken);
 
 			foreach (var bookCoverUrl in bookCoverUrls)
 			{
@@ -85,7 +89,7 @@ namespace Books.API.Services
 				if (response.IsSuccessStatusCode)
 				{
 					var bookCover = JsonSerializer.Deserialize<BookCoverDto>(
-						await response.Content.ReadAsStringAsync(cancellationToken),
+						await response.Content.ReadAsStringAsync(linkedTokenSource.Token),
 						new JsonSerializerOptions
 						{
 							PropertyNameCaseInsensitive = true
@@ -96,6 +100,10 @@ namespace Books.API.Services
 					{
 						bookCovers.Add(bookCover);
 					}
+				} 
+				else
+				{
+					localCts.Cancel();
 				}
 			}
 			return bookCovers;
@@ -113,6 +121,9 @@ namespace Books.API.Services
 				$"api/bookcovers/{bookId}-dummycover4",
 				$"api/bookcovers/{bookId}-dummycover5"
 			};
+			using var localCts = new CancellationTokenSource();
+			using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(localCts.Token, cancellationToken);
+
 			var bookCoverTasks = new List<Task<HttpResponseMessage>>();
 			foreach (var bookCoverUrl in bookCoverUrls)
 			{
@@ -124,7 +135,7 @@ namespace Books.API.Services
 				if (bookCoverTaskResult.IsSuccessStatusCode)
 				{
 					var bookCover = JsonSerializer.Deserialize<BookCoverDto>(
-						await bookCoverTaskResult.Content.ReadAsStringAsync(cancellationToken),
+						await bookCoverTaskResult.Content.ReadAsStringAsync(linkedTokenSource.Token),
 						new JsonSerializerOptions
 						{
 							PropertyNameCaseInsensitive = true
@@ -134,6 +145,10 @@ namespace Books.API.Services
 					{
 						bookCovers.Add(bookCover);
 					}
+				}
+				else
+				{
+					localCts.Cancel();
 				}
 			}
 			return bookCovers;
