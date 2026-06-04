@@ -49,7 +49,8 @@ namespace Books.API.Services
 			var client = _httpClientFactory.CreateClient("BookCoversAPI");
 			try
 			{
-				var response = await client.GetAsync($"api/bookcovers/{id}", cancellationToken);
+				// var response = await client.GetAsync($"api/bookcovers/{id}", cancellationToken);
+				var response = await client.GetAsync($"api/bookcovers/{id}?returnFault=true", cancellationToken);
 				if (response.IsSuccessStatusCode)
 				{
 					var bookCover = await response.Content.ReadFromJsonAsync<BookCoverDto>(cancellationToken: cancellationToken);
@@ -73,8 +74,8 @@ namespace Books.API.Services
 			var bookCoverUrls = new[]
 			{
 				$"api/bookcovers/{bookId}-dummycover1",
-				$"api/bookcovers/{bookId}-dummycover2?returnFault=true",
-				// $"api/bookcovers/{bookId}-dummycover2",
+				// $"api/bookcovers/{bookId}-dummycover2?returnFault=true", // to test the cancellation of the remaining requests when one of the requests fails
+				$"api/bookcovers/{bookId}-dummycover2",
 				$"api/bookcovers/{bookId}-dummycover3",
 				$"api/bookcovers/{bookId}-dummycover4",
 				$"api/bookcovers/{bookId}-dummycover5"
