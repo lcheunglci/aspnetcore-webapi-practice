@@ -53,7 +53,7 @@ namespace Books.API.Controllers
 		public async Task<IActionResult> GetBook(Guid id, CancellationToken cancellationToken)
 		{
 
-			Thread.Sleep(5000); // simulate a long-running operation
+			// Thread.Sleep(5000); // simulate a long-running operation
 			try
 			{
 				_logger.LogInformation(
@@ -66,7 +66,13 @@ namespace Books.API.Controllers
 				{
 					return NotFound();
 				}
-				return Ok(_mapper.Map<BookDto>(bookEntity));
+
+				var bookCovers = await _booksRepository.GetBookCoversAfterWaitForAllAsync(id, cancellationToken);
+
+				var mappedBook = _mapper.Map<BookWithCoversDto>(bookEntity);
+				_mapper.Map(bookCovers, mappedBook);
+
+				return Ok(mappedBook);
 			}
 			catch (OperationCanceledException)
 			{
