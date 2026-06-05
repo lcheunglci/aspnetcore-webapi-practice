@@ -32,18 +32,18 @@ builder.Services.AddHttpClient("BookCoversAPI", client =>
 {
 	// client.BaseAddress = new Uri(builder.Configuration["BookCoversAPI:BaseUrl"]!);
 	client.BaseAddress = new Uri("https://localhost:52644");
-}).AddResilienceHandler("custom", pipeline =>
-{
-	pipeline.AddTimeout(TimeSpan.FromSeconds(5));
-	pipeline.AddRetry(new HttpRetryStrategyOptions
-	{
-		MaxRetryAttempts = 3,
-		BackoffType = DelayBackoffType.Exponential,
-	});
-	pipeline.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions());
-});
+}).AddStandardResilienceHandler();
 
-//.AddStandardResilienceHandler();
+//.AddResilienceHandler("custom", pipeline =>
+//{
+//	pipeline.AddTimeout(TimeSpan.FromSeconds(5));
+//	pipeline.AddRetry(new HttpRetryStrategyOptions
+//	{
+//		MaxRetryAttempts = 3,
+//		BackoffType = DelayBackoffType.Exponential,
+//	});
+//	pipeline.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions());
+//});
 
 var app = builder.Build();
 

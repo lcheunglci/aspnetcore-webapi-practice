@@ -138,8 +138,8 @@ namespace Books.API.Controllers
 		{
 			var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
-			var bookCovers = await _booksRepository.GetBookCoverOneByOneAsync(id, cancellationToken);
-			// var bookCovers = await _booksRepository.GetBookCoversAfterWaitForAllAsync(id, cancellationToken);
+			// var bookCovers = await _booksRepository.GetBookCoverOneByOneAsync(id, cancellationToken);
+			var bookCovers = await _booksRepository.GetBookCoversAfterWaitForAllAsync(id, cancellationToken);
 			stopwatch.Stop();
 			_logger.LogInformation(
 				"[{Timestamp}] GetBookCovers completed in {ElapsedMilliseconds} ms - ThreadId {ThreadId}",
