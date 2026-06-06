@@ -19,7 +19,7 @@ public class BookCoversController : ControllerBase
         }
 
 		// simulate latency
-		await Task.Delay(1000);
+		await Task.Delay(5000);
 
 		// generate a "book cover" (byte array) between 5 and 10MB
 		//var random = new Random();

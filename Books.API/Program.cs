@@ -4,9 +4,8 @@ using Books.API.DbContexts;
 using Books.API.Models;
 using Books.API.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Http.Resilience;
-using Polly;
 
 ThreadPool.SetMaxThreads(Environment.ProcessorCount, Environment.ProcessorCount);
 
@@ -47,9 +46,19 @@ builder.Services.AddHttpClient("BookCoversAPI", client =>
 //	pipeline.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions());
 //});
 
+builder.Services.AddRequestTimeouts(options =>
+{
+	options.DefaultPolicy = new RequestTimeoutPolicy
+	{
+		Timeout = TimeSpan.FromSeconds(30)
+	};
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseRequestTimeouts();
+
 app.UseAuthorization();
 
 app.MapControllers();
@@ -66,7 +75,7 @@ app.MapGet("api/minimal/books/{id:guid}", async Task<Results<Ok<BookDto>, NotFou
 	if (bookEntity == null)
 		return TypedResults.NotFound();
 	return TypedResults.Ok(mapper.Map<BookDto>(bookEntity));
-});
+}).WithRequestTimeout(TimeSpan.FromSeconds(5));
 
 app.MapGet("api/minimal/booksstream", async (IBooksRepository repo, IMapper mapper, CancellationToken cancellationToken) =>
 {

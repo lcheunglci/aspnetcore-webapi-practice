@@ -3,6 +3,7 @@ using AutoMapper;
 using Books.API.ExportWriters;
 using Books.API.Models;
 using Books.API.Services;
+using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Books.API.Controllers
@@ -59,16 +60,17 @@ namespace Books.API.Controllers
 		}
 
 		[HttpGet("{id:guid}", Name = "GetBook")]
+		[RequestTimeout(2000)]
 		public async Task<IActionResult> GetBook(Guid id, CancellationToken cancellationToken)
 		{
 
-			// Thread.Sleep(5000); // simulate a long-running operation
 			try
 			{
 				_logger.LogInformation(
 					"[{Timestamp}] GetBook entered - ThreadId {ThreadId}",
 					DateTime.UtcNow.ToString("HH:mm:ss.fff"),
 					Environment.CurrentManagedThreadId);
+				// Thread.Sleep(5000); // simulate a long-running operation
 
 				var bookEntity = await _booksRepository.GetBookAsync(id, cancellationToken);
 				if (bookEntity == null)
