@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Http.Resilience;
 using Polly;
 
+ThreadPool.SetMaxThreads(Environment.ProcessorCount, Environment.ProcessorCount);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

@@ -49,6 +49,15 @@ namespace Books.API.Controllers
 		}
 
 
+		[HttpGet("syncoverasync")]
+		public IActionResult GetBooksSynOverAsyncc()
+		{
+			// bad code result blocks the current thread pool thread while waiting for the async operation to complete, which can lead to thread starvation under load
+			// parks a thread, and the pool can only inject new threads slowly 1-2 per second. Queue length rises, latency explodes, and eventually you get timeouts or 503s
+			var bookEntities = _booksRepository.GetBooksAsync(CancellationToken.None).Result;
+			return Ok(_mapper.Map<IEnumerable<BookDto>>(bookEntities));
+		}
+
 		[HttpGet("{id:guid}", Name = "GetBook")]
 		public async Task<IActionResult> GetBook(Guid id, CancellationToken cancellationToken)
 		{
