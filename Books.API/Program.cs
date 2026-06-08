@@ -90,3 +90,8 @@ app.MapGet("api/minimal/booksstream", async (IBooksRepository repo, IMapper mapp
 });
 
 app.Run();
+
+public partial class Program
+{
+
+}

@@ -25,4 +25,8 @@
     <Folder Include="Migrations\" />
   </ItemGroup>
 
+	<!--<ItemGroup>
+		<InternalsVisibleTo Include="Books.API.Tests" />
+	</ItemGroup>-->
+	
 </Project>
