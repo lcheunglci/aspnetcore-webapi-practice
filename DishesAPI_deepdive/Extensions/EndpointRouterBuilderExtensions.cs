@@ -1,4 +1,5 @@
-﻿using DishesAPI.EndpointHandlers;
+﻿using DishesAPI.Attributes;
+using DishesAPI.EndpointHandlers;
 
 namespace DishesAPI.Extensions;
 
@@ -6,6 +7,9 @@ public static class EndpointRouterBuilderExtensions
 {
     public static void RegisterDishesEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
     {
+		//var apiGroup = endpointRouteBuilder.MapGroup("/api")
+		//	.RequireAuthorization();
+
         var dishesEndpoints = endpointRouteBuilder.MapGroup("/dishes")
             .RequireAuthorization()
             .WithTags("Dishes");
@@ -34,7 +38,13 @@ public static class EndpointRouterBuilderExtensions
         dishWithGuidIdEndpoints.MapPut("", DishesHandlers.UpdateDishAsync)
             .RequireAuthorization("RequireAdminFromBelgium"); 
         dishWithGuidIdEndpoints.MapDelete("", DishesHandlers.DeleteDishAsync)
-            .RequireAuthorization("RequireAdminFromBelgium"); 
+            .RequireAuthorization("RequireAdminFromBelgium");
+
+		dishesEndpoints.MapGet("/experimental", () => { throw new NotImplementedException(); })
+			.WithMetadata(new ExperimentalAttribute());
+
+		//var isExperimental = context.EndpointMetadata
+		//	OfType<ExperimentalAttribute>().Any();
     }
 
     public static void RegisterIngredientsEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
