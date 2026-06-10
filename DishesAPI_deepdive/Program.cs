@@ -1,4 +1,4 @@
-using DishesAPI.DbContexts;
+﻿using DishesAPI.DbContexts;
 using DishesAPI.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
@@ -55,6 +55,8 @@ builder.Services.AddOpenApi(options =>
 
 });
 
+builder.Services.RegisterAllEndpoints();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -85,8 +87,9 @@ app.MapGet("/testerror", () =>
     throw new NotImplementedException();
 });
 
-app.RegisterDishesEndpoints();
-app.RegisterIngredientsEndpoints();
+// app.RegisterDishesEndpoints();
+// app.RegisterIngredientsEndpoints();
+app.MapEndpoints();
 
 // recreate & migrate the database on each run, for demo purposes
 using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())

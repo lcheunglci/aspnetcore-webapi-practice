@@ -5,7 +5,8 @@ namespace DishesAPI.Extensions;
 
 public static class EndpointRouterBuilderExtensions
 {
-    public static void RegisterDishesEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
+
+	public static void RegisterDishesEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
     {
 		//var apiGroup = endpointRouteBuilder.MapGroup("/api")
 		//	.RequireAuthorization();
