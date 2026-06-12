@@ -1,50 +1,50 @@
-﻿using DishesAPI.Entities;
-using DishesAPI.Models;
+﻿//using DishesAPI.Entities;
+//using DishesAPI.Models;
 
-namespace DishesAPI.Extensions;
+//namespace DishesAPI.Extensions;
 
-public static class MappingExtensions
-{
-    public static DishDto ToDishDto(this Dish dish)
-    {
-        return new DishDto
-        {
-            Id = dish.Id,
-            Name = dish.Name
-        };
-    }
+//public static class MappingExtensions
+//{
+//    public static DishDto ToDishDto(this Dish dish)
+//    {
+//        return new DishDto
+//        {
+//            Id = dish.Id,
+//            Name = dish.Name
+//        };
+//    }
 
-    public static IEnumerable<DishDto> ToDishDtoList(this IEnumerable<Dish> dishes)
-    {
-        return dishes.Select(d => d.ToDishDto());
-    }
+//    public static IEnumerable<DishDto> ToDishDtoList(this IEnumerable<Dish> dishes)
+//    {
+//        return dishes.Select(d => d.ToDishDto());
+//    }
 
-    public static IngredientDto ToIngredientDto(this Ingredient ingredient, Guid dishId)
-    {
-        return new IngredientDto
-        {
-            Id = ingredient.Id,
-            Name = ingredient.Name,
-            DishId = dishId
-        };
-    }
+//    public static IngredientDto ToIngredientDto(this Ingredient ingredient, Guid dishId)
+//    {
+//        return new IngredientDto
+//        {
+//            Id = ingredient.Id,
+//            Name = ingredient.Name,
+//            DishId = dishId
+//        };
+//    }
 
-    public static IEnumerable<IngredientDto> ToIngredientDtoList(
-        this IEnumerable<Ingredient> ingredients, Guid dishId)
-    {
-        return ingredients.Select(i => i.ToIngredientDto(dishId));
-    }
+//    public static IEnumerable<IngredientDto> ToIngredientDtoList(
+//        this IEnumerable<Ingredient> ingredients, Guid dishId)
+//    {
+//        return ingredients.Select(i => i.ToIngredientDto(dishId));
+//    }
 
-    public static Dish ToDish(this DishForCreationDto dishForCreationDto)
-    {
-        return new Dish
-        {
-            Name = dishForCreationDto.Name
-        };
-    }
+//    public static Dish ToDish(this DishForCreationDto dishForCreationDto)
+//    {
+//        return new Dish
+//        {
+//            Name = dishForCreationDto.Name
+//        };
+//    }
 
-    public static void UpdateFromDto(this Dish dish, DishForUpdateDto dishForUpdateDto)
-    {
-        dish.Name = dishForUpdateDto.Name;
-    }
-}
+//    public static void UpdateFromDto(this Dish dish, DishForUpdateDto dishForUpdateDto)
+//    {
+//        dish.Name = dishForUpdateDto.Name;
+//    }
+//}

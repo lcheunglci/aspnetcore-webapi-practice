@@ -1,6 +1,7 @@
 ﻿using DishesAPI.DbContexts;
 using DishesAPI.Entities;
 using DishesAPI.Extensions;
+using DishesAPI.Mappers;
 using DishesAPI.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
@@ -49,8 +50,8 @@ public static class DishesHandlers
     public static async Task<CreatedAtRoute<DishDto>> CreateDishAsync(DishesDbContext dishesDbContext,
     DishForCreationDto dishForCreationDto)
     {
-        var dishEntity = dishForCreationDto.ToDish();
-        dishesDbContext.Add(dishEntity);
+		var dishEntity = dishForCreationDto.ToDish();
+		dishesDbContext.Add(dishEntity);
         await dishesDbContext.SaveChangesAsync();
         var dishToReturn = dishEntity.ToDishDto();
 
@@ -73,7 +74,9 @@ public static class DishesHandlers
         {
             return TypedResults.NotFound();
         }
-        dishEntity.UpdateFromDto(dishForUpdateDto);
+        // dishEntity.UpdateFromDto(dishForUpdateDto);
+		dishForUpdateDto.UpdateFromDto(dishEntity);
+
         await dishesDbContext.SaveChangesAsync();
         return TypedResults.NoContent();
     }

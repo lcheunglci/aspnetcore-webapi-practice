@@ -25,7 +25,7 @@ namespace DishesAPI.Mappers
 
 		[MapperIgnoreSource(nameof(Ingredient.Dishes))]
 		[MapperIgnoreTarget(nameof(IngredientDto.DishId))]
-		public static partial IngredientDto MapIngredient(Ingredient ingredient);
+		private static partial IngredientDto MapIngredient(Ingredient ingredient);
 
 		public static IngredientDto ToIngredientDto(
 			this Ingredient ingredient, Guid dishId)
@@ -42,31 +42,10 @@ namespace DishesAPI.Mappers
 			return ingredients.Select(i => i.ToIngredientDto(dishId));
 		}
 
-		public static Dish ToDish(this DishForCreationDto dishForCreationDto)
-		{
-			return new Dish
-			{
-				Name = dishForCreationDto.Name
-			};
-		}
-
 		public static void UpdateFromDto(this Dish dish, DishForUpdateDto dishForUpdateDto)
 		{
 			dish.Name = dishForUpdateDto.Name;
 
-		}
-
-		[MapperIgnoreSource(nameof(Ingredient.Dishes))]
-		[MapperIgnoreTarget(nameof(IngredientDto.DishId))]
-		private static partial IngredientDto MapIngredient(Ingredient ingredient);
-
-		public static IngredientDto ToIngredientDto(
-			this Ingredient ingredient, Guid dishId
-			)
-		{
-			var dto = MapIngredient(ingredient);
-			dto.DishId = dishId;
-			return dto;
 		}
 
 		public static IEnumerable<IngredientDto> ToIntegrientDtoList(
