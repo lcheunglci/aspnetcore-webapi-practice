@@ -1,4 +1,5 @@
 ﻿using DishesAPI.Attributes;
+using DishesAPI.EndpointFilters;
 using DishesAPI.EndpointHandlers;
 
 namespace DishesAPI.Endpoints
@@ -37,15 +38,18 @@ namespace DishesAPI.Endpoints
 				.ProducesValidationProblem(400);
 
 			dishWithGuidIdEndpoints.MapPut("", DishesHandlers.UpdateDishAsync)
-				.RequireAuthorization("RequireAdminFromBelgium");
+				// .RequireAuthorization("RequireAdminFromBelgium")
+				.AddEndpointFilter<PerformanceTrackingFilter>()
+				.AddEndpointFilter<DishIsLockedFilter>();
+
+
 			dishWithGuidIdEndpoints.MapDelete("", DishesHandlers.DeleteDishAsync)
-				.RequireAuthorization("RequireAdminFromBelgium");
+				// .RequireAuthorization("RequireAdminFromBelgium")
+				.AddEndpointFilter<PerformanceTrackingFilter>()
+				.AddEndpointFilter<DishIsLockedFilter>();
 
 			dishesEndpoints.MapGet("/experimental", () => { throw new NotImplementedException(); })
 				.WithMetadata(new ExperimentalAttribute());
-
-			//var isExperimental = context.EndpointMetadata
-			//	OfType<ExperimentalAttribute>().Any();
 		}
 	}
 }
