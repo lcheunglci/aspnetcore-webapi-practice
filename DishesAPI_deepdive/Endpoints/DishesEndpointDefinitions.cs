@@ -23,7 +23,8 @@ namespace DishesAPI.Endpoints
 				.WithDescription("Returns all dishes, optionally filtered by name.");
 
 			dishWithGuidIdEndpoints.MapGet("", DishesHandlers.GetDishByIdAsync)
-				.WithName("GetDish");
+				.WithName("GetDish")
+				.AddEndpointFilter<LogNotFoundResponseFilter>();
 			dishesEndpoints.MapGet("/{dishName}", DishesHandlers.GetDishByNameAsync)
 				.AllowAnonymous()
 				.WithSummary("Get a dish by name")
