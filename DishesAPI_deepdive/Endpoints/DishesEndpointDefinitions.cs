@@ -14,17 +14,19 @@ namespace DishesAPI.Endpoints
 
 			var dishesEndpoints = builder.MapGroup("/dishes")
 				.RequireAuthorization()
-				.WithTags("Dishes");
+				.WithTags("Dishes")
+				.AddEndpointFilter<PerformanceTrackingFilter>();
 
-			var dishWithGuidIdEndpoints = dishesEndpoints.MapGroup("/{dishId:guid}");
+			var dishWithGuidIdEndpoints = dishesEndpoints.MapGroup("/{dishId:guid}")
+				.AddEndpointFilter<LogNotFoundResponseFilter>();
 
 			dishesEndpoints.MapGet("", DishesHandlers.GetDishesAsync)
 				.WithSummary("Get all dishes")
 				.WithDescription("Returns all dishes, optionally filtered by name.");
 
 			dishWithGuidIdEndpoints.MapGet("", DishesHandlers.GetDishByIdAsync)
-				.WithName("GetDish")
-				.AddEndpointFilter<LogNotFoundResponseFilter>();
+				.WithName("GetDish");
+
 			dishesEndpoints.MapGet("/{dishName}", DishesHandlers.GetDishByNameAsync)
 				.AllowAnonymous()
 				.WithSummary("Get a dish by name")
@@ -40,13 +42,11 @@ namespace DishesAPI.Endpoints
 
 			dishWithGuidIdEndpoints.MapPut("", DishesHandlers.UpdateDishAsync)
 				// .RequireAuthorization("RequireAdminFromBelgium")
-				.AddEndpointFilter<PerformanceTrackingFilter>()
 				.AddEndpointFilter<DishIsLockedFilter>();
-
 
 			dishWithGuidIdEndpoints.MapDelete("", DishesHandlers.DeleteDishAsync)
 				// .RequireAuthorization("RequireAdminFromBelgium")
-				.AddEndpointFilter<PerformanceTrackingFilter>()
+
 				.AddEndpointFilter<DishIsLockedFilter>();
 
 			dishesEndpoints.MapGet("/experimental", () => { throw new NotImplementedException(); })
