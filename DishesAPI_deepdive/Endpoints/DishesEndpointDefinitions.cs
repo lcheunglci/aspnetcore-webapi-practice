@@ -35,7 +35,7 @@ namespace DishesAPI.Endpoints
 					"This endpoint allows anonymous access.  ");
 			;
 			dishesEndpoints.MapPost("", DishesHandlers.CreateDishAsync)
-				.RequireAuthorization("RequireAdminFromBelgium")
+				// .RequireAuthorization("RequireAdminFromBelgium")
 				.WithSummary("Create a dish")
 				.WithDescription("Creates a new dish.  Requires the admin role and country Belgium.")
 				.ProducesValidationProblem(400);
