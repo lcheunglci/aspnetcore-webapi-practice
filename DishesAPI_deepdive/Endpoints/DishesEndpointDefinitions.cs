@@ -38,7 +38,8 @@ namespace DishesAPI.Endpoints
 				// .RequireAuthorization("RequireAdminFromBelgium")
 				.WithSummary("Create a dish")
 				.WithDescription("Creates a new dish.  Requires the admin role and country Belgium.")
-				.ProducesValidationProblem(400);
+				.ProducesValidationProblem(400)
+				.AddEndpointFilter<ValidateAnnotationsFilter>();
 
 			dishWithGuidIdEndpoints.MapPut("", DishesHandlers.UpdateDishAsync)
 				// .RequireAuthorization("RequireAdminFromBelgium")
