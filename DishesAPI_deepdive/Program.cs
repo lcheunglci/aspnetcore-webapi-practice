@@ -55,6 +55,14 @@ builder.Services.AddOpenApi(options =>
 
 });
 
+builder.Services.AddApiVersioning(options =>
+{
+	options.DefaultApiVersion = new Asp.Versioning.ApiVersion(1, 0);
+	options.AssumeDefaultVersionWhenUnspecified = true;
+	options.ReportApiVersions = true;
+	options.ApiVersionReader = new Asp.Versioning.UrlSegmentApiVersionReader();
+});
+
 builder.Services.RegisterAllEndpoints();
 
 var app = builder.Build();

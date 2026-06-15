@@ -54,5 +54,21 @@ namespace DishesAPI.Mappers
 			return ingredients.Select(i => i.ToIngredientDto(dishId));
 		}
 
+		public static DishV2Dto ToDishV2Dto(this Dish dish)
+		{
+			return new DishV2Dto
+			{
+				Id = dish.Id,
+				Name = dish.Name,
+				IngredientCount = dish.Ingredients?.Count ?? 0
+			};
+		}
+
+		public static IEnumerable<DishV2Dto> ToDishV2DtoList(
+			this IEnumerable<Dish> dishes>)
+		{
+			return dishes.Select(d => d.ToDishV2Dto());
+		}
+
 	}
 }

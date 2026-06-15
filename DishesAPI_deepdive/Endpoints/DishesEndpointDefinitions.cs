@@ -8,13 +8,20 @@ namespace DishesAPI.Endpoints
 	{
 		public void RegisterEndpoints(IEndpointRouteBuilder builder)
 		{
+			var versionSet = builder.NewApiVersionSet()
+				.HasApiVersion(new Asp.Versioning.ApiVersion(1, 0))
+				.ReportApiVersions()
+				.Build();
 
 			//var apiGroup = endpointRouteBuilder.MapGroup("/api")
 			//	.RequireAuthorization();
 
-			var dishesEndpoints = builder.MapGroup("/dishes")
+			var dishesEndpoints = builder.MapGroup("/v{version:apiVersion}/dishes")
 				.RequireAuthorization()
 				.WithTags("Dishes")
+				.WithGroupName("v1")
+				.WithApiVersionSet(versionSet)
+				.MapToApiVersion(new Asp.Versioning.ApiVersion(1, 0))
 				.AddEndpointFilter<PerformanceTrackingFilter>();
 
 			var dishWithGuidIdEndpoints = dishesEndpoints.MapGroup("/{dishId:guid}")
