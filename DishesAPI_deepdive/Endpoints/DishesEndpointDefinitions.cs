@@ -59,6 +59,13 @@ namespace DishesAPI.Endpoints
 
 			dishesEndpoints.MapGet("/experimental", () => { throw new NotImplementedException(); })
 				.WithMetadata(new ExperimentalAttribute());
+
+			dishesEndpoints.MapGet("/stream", DishesStreamingHandlers.GetDishesStreamAsync)
+				.WithSummary("Stream all dishes")
+				.WithDescription(
+					"Returns all dishes as a streamed JSON array" +
+					"using IAsyncEnumerable. " +
+					"This response uses chunked transfer encoding.");
 		}
 	}
 }
