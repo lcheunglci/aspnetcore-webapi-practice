@@ -66,6 +66,17 @@ namespace DishesAPI.Endpoints
 					"Returns all dishes as a streamed JSON array" +
 					"using IAsyncEnumerable. " +
 					"This response uses chunked transfer encoding.");
+
+			dishesEndpoints.MapGet("/sse", DishesStreamingHandlers.GetDishesSseStream)
+			.WithSummary("Get dishes as server-sent events")
+			.WithDescription(
+				"Returns all dishes as a server-sent event stream" +
+				"(text/event-stream). Each dish is sent as a " +
+				"'dish' event with JSON data. A final 'done' " +
+				"event signals the end of the stream.");
+
 		}
+
+
 	}
 }
