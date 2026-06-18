@@ -1,0 +1,92 @@
+@baseUrl = https://localhost:7132
+@authorId = d28888e9-2ba9-473a-a40f-e38cb54f9b35
+@bookId = d8663e5e-7494-4f81-8739-6e0de1bea7ee
+
+# Available Author IDs:
+# George RR Martin: d28888e9-2ba9-473a-a40f-e38cb54f9b35
+# Douglas Adams: 2902b665-1190-4c70-9915-b9c2d7680450
+# Stephen Fry: da2fd609-d754-4feb-8acd-c4f9ff13ba96
+# James Elroy: 24810dfc-2d94-4cc7-aab5-cdf98b83f0c9
+
+# Available Book IDs:
+# A Game of Thrones: d8663e5e-7494-4f81-8739-6e0de1bea7ee (George RR Martin)
+# A Dance with Dragons: 5b1c2b4d-48c7-402a-80c3-cc796ad49c6b (George RR Martin)
+# Hitchhiker's Guide: 40ff5488-fdab-45b5-bc3a-14302d59869a (Douglas Adams)
+# Mythos: d173e20d-159e-4127-9ce9-b0ac2564ad97 (Stephen Fry)
+# American Tabloid: 493c3228-3444-4a49-9cc0-e8532edc59b2 (James Elroy)
+
+##############################
+# Authors - Controller Based
+##############################
+
+### GET all authors
+GET {{baseUrl}}/api/authors
+Accept: application/json
+
+### GET a specific author
+GET {{baseUrl}}/api/authors/{{authorId}}
+Accept: application/json
+
+### PUT - Update an author
+PUT {{baseUrl}}/api/authors/{{authorId}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "firstName": "George R.R.",
+  "lastName": "Martin"
+}
+
+### PATCH - Partially update an author (single operation)
+PATCH {{baseUrl}}/api/authors/{{authorId}}
+Content-Type: application/json-patch+json
+Accept: application/json
+
+[
+  {
+    "op": "replace",
+    "path": "/firstName",
+    "value": "George Raymond Richard"
+  }
+]
+
+### PATCH - Partially update an author (multiple operations)
+PATCH {{baseUrl}}/api/authors/{{authorId}}
+Content-Type: application/json-patch+json
+Accept: application/json
+
+[
+  {
+    "op": "replace",
+    "path": "/firstName",
+    "value": "George Raymond Richard"
+  },
+  {
+    "op": "replace",
+    "path": "/lastName",
+    "value": "Martin"
+  }
+]
+
+#############################
+# Books - Minimal API Based
+#############################
+
+### GET all books for an author
+GET {{baseUrl}}/api/authors/{{authorId}}/books
+Accept: application/json
+
+### GET a specific book
+GET {{baseUrl}}/api/authors/{{authorId}}/books/{{bookId}}
+Accept: application/json
+
+### POST - Create a new book
+POST {{baseUrl}}/api/authors/{{authorId}}/books
+Content-Type: application/json
+Accept: application/json
+
+{
+  "title": "The Winds of Winter",
+  "description": "The sixth novel in the epic fantasy series A Song of Ice and Fire.",
+  "amountOfPages": 1500
+}

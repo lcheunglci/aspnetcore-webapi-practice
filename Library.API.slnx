@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Library.API\Library.API.csproj" />
+  <Properties>
+    <Property Name="Configuration|Platform=Debug|Any CPU" />
+    <Property Name="Configuration|Platform=Release|Any CPU" />
+  </Properties>
+</Solution>
