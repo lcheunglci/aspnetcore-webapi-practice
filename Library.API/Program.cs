@@ -1,4 +1,4 @@
-using Library.API.Contexts;
+﻿using Library.API.Contexts;
 using Library.API.Endpoints;
 using Library.API.Services;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +10,9 @@ builder.Services.AddControllers()
     .AddXmlDataContractSerializerFormatters();
 
 builder.Services.AddProblemDetails();
+
+// builder.Services.AddOpenApi("library-api");
+builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<LibraryContext>(
     dbContextOptions => dbContextOptions.UseSqlite(
@@ -28,6 +31,9 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+// app.MapOpenApi("/openapi/{documentName}.json");
+app.MapOpenApi();
 
 app.MapControllers();
 
