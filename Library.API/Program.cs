@@ -2,6 +2,7 @@
 using Library.API.Endpoints;
 using Library.API.Services;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,14 @@ app.UseAuthorization();
 
 // app.MapOpenApi("/openapi/{documentName}.json");
 app.MapOpenApi();
+
+app.MapScalarApiReference(options =>
+{
+	options
+		.WithTitle("Library API")
+		.WithTheme(ScalarTheme.DeepSpace)
+		.WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+});
 
 app.MapControllers();
 
