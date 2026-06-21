@@ -1,3 +1,4 @@
+﻿using System.ComponentModel;
 using AutoMapper;
 using Library.API.Models;
 using Library.API.Services;
@@ -9,11 +10,14 @@ public static class BookEndpoints
 {
     public static RouteGroupBuilder MapBookEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("api/authors/{authorId:guid}/books");
+		var group = app.MapGroup("api/authors/{authorId:guid}/books")
+			.WithTags("Books");
 
         group.MapGet("", GetBooks);
-        group.MapGet("{bookId:guid}", GetBook)
-            .WithName("GetBook");
+		group.MapGet("{bookId:guid}", GetBook)
+			.WithName("GetBook")
+			.WithSummary("Get a book by id")
+			.WithDescription("Returns a single book with title and description for a specific author");
         group.MapPost("", CreateBook);
 
         return group;
@@ -35,8 +39,8 @@ public static class BookEndpoints
     }
 
     private static async Task<IResult> GetBook(
-        Guid authorId,
-        Guid bookId,
+		[Description("The id of the author")] Guid authorId,
+        [Description("The id of the book to get")] Guid bookId,
         IAuthorRepository authorRepository,
         IBookRepository bookRepository,
         IMapper mapper)
