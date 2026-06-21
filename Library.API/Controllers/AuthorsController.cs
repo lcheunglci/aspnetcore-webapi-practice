@@ -25,6 +25,11 @@ public class AuthorsController(
         return Ok(_mapper.Map<IEnumerable<Author>>(authorsFromRepo));
     }
 
+	/// <summary>
+	/// Get an author by id.
+	/// </summary>
+	/// <param name="authorId">The id of the author to get</param>
+	/// <returns>An author with the first and last name</returns>
     [HttpGet("{authorId}")]
     public async Task<ActionResult<Author>> GetAuthor(
         Guid authorId)
