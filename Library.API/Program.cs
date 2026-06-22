@@ -13,7 +13,29 @@ builder.Services.AddControllers()
 builder.Services.AddProblemDetails();
 
 // builder.Services.AddOpenApi("library-api");
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+	options.AddDocumentTransformer((document, context, cancellationToken) =>
+	{
+		document.Info = new()
+		{
+			Title = "Library API",
+			Version = "v1",
+			Description = "Through this API you can access authors and their books.",
+			Contact = new()
+			{
+				Name = "Test Author",
+				Email = "test@test.com"
+			},
+			License = new()
+			{
+				Name = "MIT License",
+				Url = new Uri("https://opensource.org/licenses/MIT")
+			}
+		};
+		return Task.CompletedTask;
+	});
+});
 
 builder.Services.AddDbContext<LibraryContext>(
     dbContextOptions => dbContextOptions.UseSqlite(
