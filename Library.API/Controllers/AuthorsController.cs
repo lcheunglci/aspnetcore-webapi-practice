@@ -30,8 +30,14 @@ public class AuthorsController(
 	/// </summary>
 	/// <param name="authorId">The id of the author to get</param>
 	/// <returns>An author with the first and last name</returns>
+	/// <response code="200">Returns the requested author</response>
+	/// <response code="404">The author was not found</response>
+	/// <response code="400">The request is invalid</response>
     [HttpGet("{authorId}")]
-    public async Task<ActionResult<Author>> GetAuthor(
+	[ProducesResponseType<Author>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	public async Task<ActionResult<Author>> GetAuthor(
         Guid authorId)
     {
         var authorFromRepo = await _authorsRepository.GetAuthorAsync(authorId);
