@@ -17,8 +17,17 @@ public static class BookEndpoints
 		group.MapGet("{bookId:guid}", GetBook)
 			.WithName("GetBook")
 			.WithSummary("Get a book by id")
-			.WithDescription("Returns a single book with title and description for a specific author");
-        group.MapPost("", CreateBook);
+			.WithDescription("Returns a single book with title and description for a specific author")
+			.Produces<Book>(StatusCodes.Status200OK)
+			.Produces(StatusCodes.Status404NotFound)
+			.ProducesProblem(StatusCodes.Status400BadRequest);
+
+		group.MapPost("", CreateBook)
+			.WithSummary("Create a book for an author")
+			.WithDescription("Creates a new book for a specific author")
+			.Produces<Book>(StatusCodes.Status201Created)
+			.Produces(StatusCodes.Status404NotFound)
+			.ProducesValidationProblem();
 
         return group;
     }
