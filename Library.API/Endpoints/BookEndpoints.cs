@@ -25,6 +25,8 @@ public static class BookEndpoints
 		group.MapPost("", CreateBook)
 			.WithSummary("Create a book for an author")
 			.WithDescription("Creates a new book for a specific author")
+			//.Accepts<BookForCreation>("application/json")
+			//.Accepts<BookForCreation>("application/xml")
 			.Produces<Book>(StatusCodes.Status201Created)
 			.Produces(StatusCodes.Status404NotFound)
 			.ProducesValidationProblem();

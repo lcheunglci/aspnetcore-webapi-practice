@@ -51,6 +51,7 @@ public class AuthorsController(
     }
 
     [HttpPut("{authorId}")]
+	[Consumes("application/json")]
     public async Task<ActionResult<Author>> UpdateAuthor(
         Guid authorId,
         AuthorForUpdate authorForUpdate)
