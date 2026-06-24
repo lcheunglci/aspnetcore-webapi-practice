@@ -37,6 +37,7 @@ public class AuthorsController(
 	[ProducesResponseType<Author>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesDefaultResponseType(typeof(ProblemDetails))]
 	public async Task<ActionResult<Author>> GetAuthor(
         Guid authorId)
     {
