@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Library.API.Models;
 using Library.API.Services;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,20 +9,20 @@ namespace Library.API.Controllers;
 [Route("api/authors")]
 [ApiController]
 public class AuthorsController(
-    IAuthorRepository authorsRepository,
-    IMapper mapper) : ControllerBase
+	IAuthorRepository authorsRepository,
+	IMapper mapper) : ControllerBase
 {
-    private readonly IAuthorRepository _authorsRepository = authorsRepository
-        ?? throw new ArgumentNullException(nameof(authorsRepository));
-    private readonly IMapper _mapper = mapper
-        ?? throw new ArgumentNullException(nameof(mapper));
+	private readonly IAuthorRepository _authorsRepository = authorsRepository
+		?? throw new ArgumentNullException(nameof(authorsRepository));
+	private readonly IMapper _mapper = mapper
+		?? throw new ArgumentNullException(nameof(mapper));
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Author>>> GetAuthors()
-    {
-        var authorsFromRepo = await _authorsRepository.GetAuthorsAsync();
-        return Ok(_mapper.Map<IEnumerable<Author>>(authorsFromRepo));
-    }
+	[HttpGet]
+	public async Task<ActionResult<IEnumerable<Author>>> GetAuthors()
+	{
+		var authorsFromRepo = await _authorsRepository.GetAuthorsAsync();
+		return Ok(_mapper.Map<IEnumerable<Author>>(authorsFromRepo));
+	}
 
 	/// <summary>
 	/// Get an author by id.
@@ -33,88 +32,89 @@ public class AuthorsController(
 	/// <response code="200">Returns the requested author</response>
 	/// <response code="404">The author was not found</response>
 	/// <response code="400">The request is invalid</response>
-    [HttpGet("{authorId}")]
+	[HttpGet("{authorId}")]
 	[ProducesResponseType<Author>(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesDefaultResponseType(typeof(ProblemDetails))]
 	public async Task<ActionResult<Author>> GetAuthor(
-        Guid authorId)
-    {
-        var authorFromRepo = await _authorsRepository.GetAuthorAsync(authorId);
-        if (authorFromRepo == null)
-        {
-            return NotFound();
-        }
+		Guid authorId)
+	{
+		var authorFromRepo = await _authorsRepository.GetAuthorAsync(authorId);
+		if (authorFromRepo == null)
+		{
+			return NotFound();
+		}
 
-        return Ok(_mapper.Map<Author>(authorFromRepo));
-    }
+		return Ok(_mapper.Map<Author>(authorFromRepo));
+	}
 
-    [HttpPut("{authorId}")]
+	[HttpPut("{authorId}")]
 	[Consumes("application/json")]
-    public async Task<ActionResult<Author>> UpdateAuthor(
-        Guid authorId,
-        AuthorForUpdate authorForUpdate)
-    {
-        var authorFromRepo = await _authorsRepository.GetAuthorAsync(authorId);
-        if (authorFromRepo == null)
-        {
-            return NotFound();
-        }
+	public async Task<ActionResult<Author>> UpdateAuthor(
+		Guid authorId,
+		AuthorForUpdate authorForUpdate)
+	{
+		var authorFromRepo = await _authorsRepository.GetAuthorAsync(authorId);
+		if (authorFromRepo == null)
+		{
+			return NotFound();
+		}
 
-        _mapper.Map(authorForUpdate, authorFromRepo);
+		_mapper.Map(authorForUpdate, authorFromRepo);
 
-        // update & save
-        _authorsRepository.UpdateAuthor(authorFromRepo);
-        await _authorsRepository.SaveChangesAsync();
+		// update & save
+		_authorsRepository.UpdateAuthor(authorFromRepo);
+		await _authorsRepository.SaveChangesAsync();
 
-        // return the author
-        return Ok(_mapper.Map<Author>(authorFromRepo));
-    }
+		// return the author
+		return Ok(_mapper.Map<Author>(authorFromRepo));
+	}
 
-    [HttpPatch("{authorId}")]
-    public async Task<ActionResult<Author>> PartiallyUpdateAuthor(
-        Guid authorId,
-        JsonPatchDocument<AuthorForUpdate> patchDocument)
-    {
-        var authorFromRepo = await _authorsRepository.GetAuthorAsync(authorId);
-        if (authorFromRepo == null)
-        {
-            return NotFound();
-        }
+	[HttpPatch("{authorId}")]
+	[ApiExplorerSettings(IgnoreApi = true)]
+	public async Task<ActionResult<Author>> PartiallyUpdateAuthor(
+		Guid authorId,
+		JsonPatchDocument<AuthorForUpdate> patchDocument)
+	{
+		var authorFromRepo = await _authorsRepository.GetAuthorAsync(authorId);
+		if (authorFromRepo == null)
+		{
+			return NotFound();
+		}
 
-        // map to DTO to apply the patch to
-        var author = _mapper.Map<AuthorForUpdate>(authorFromRepo);
+		// map to DTO to apply the patch to
+		var author = _mapper.Map<AuthorForUpdate>(authorFromRepo);
 
-        // Apply the patch. If there are errors when applying, the patch doc 
-        // was badly formed  These aren't caught via the ApiController
-        // validation, so we must manually check the modelstate and
-        // potentially return these errors.
-        patchDocument.ApplyTo(author, jsonPatchError =>
-        {
-            var key = jsonPatchError.AffectedObject.GetType().Name;
-            ModelState.AddModelError(key, jsonPatchError.ErrorMessage);
-        });
+		// Apply the patch. If there are errors when applying, the patch doc 
+		// was badly formed  These aren't caught via the ApiController
+		// validation, so we must manually check the modelstate and
+		// potentially return these errors.
+		patchDocument.ApplyTo(author, jsonPatchError =>
+		{
+			var key = jsonPatchError.AffectedObject.GetType().Name;
+			ModelState.AddModelError(key, jsonPatchError.ErrorMessage);
+		});
 
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
+		if (!ModelState.IsValid)
+		{
+			return BadRequest(ModelState);
+		}
 
-        // validate the mapped author
-        if (!TryValidateModel(author))
-        {
-            return BadRequest(ModelState);
-        }
+		// validate the mapped author
+		if (!TryValidateModel(author))
+		{
+			return BadRequest(ModelState);
+		}
 
-        // map the applied changes on the DTO back into the entity
-        _mapper.Map(author, authorFromRepo);
+		// map the applied changes on the DTO back into the entity
+		_mapper.Map(author, authorFromRepo);
 
-        // update & save
-        _authorsRepository.UpdateAuthor(authorFromRepo);
-        await _authorsRepository.SaveChangesAsync();
+		// update & save
+		_authorsRepository.UpdateAuthor(authorFromRepo);
+		await _authorsRepository.SaveChangesAsync();
 
-        // return the author
-        return Ok(_mapper.Map<Author>(authorFromRepo));
-    }
+		// return the author
+		return Ok(_mapper.Map<Author>(authorFromRepo));
+	}
 }
