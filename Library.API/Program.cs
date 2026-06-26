@@ -1,4 +1,5 @@
 ﻿using Library.API.Contexts;
+using Library.API.DocumentTransformers;
 using Library.API.Endpoints;
 using Library.API.Services;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +36,7 @@ builder.Services.AddOpenApi(options =>
 		};
 		return Task.CompletedTask;
 	});
+	options.AddDocumentTransformer<AddDefaultResponseTypeTransformer>();
 });
 
 builder.Services.AddDbContext<LibraryContext>(
