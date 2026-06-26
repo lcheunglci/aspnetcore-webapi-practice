@@ -37,6 +37,7 @@ builder.Services.AddOpenApi(options =>
 		return Task.CompletedTask;
 	});
 	options.AddDocumentTransformer<AddDefaultResponseTypeTransformer>();
+	options.AddOperationTransformer<ResponseDescriptionOperationTransformer>();
 });
 
 builder.Services.AddDbContext<LibraryContext>(
