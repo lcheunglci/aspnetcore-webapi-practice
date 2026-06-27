@@ -2,6 +2,7 @@
 using Library.API.DocumentTransformers;
 using Library.API.Endpoints;
 using Library.API.Services;
+using Library.API.Transformers;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -37,6 +38,7 @@ builder.Services.AddOpenApi(options =>
 		return Task.CompletedTask;
 	});
 	options.AddDocumentTransformer<AddDefaultResponseTypeTransformer>();
+	options.AddDocumentTransformer<RemoveInternalOperationsTransformer>();
 	options.AddOperationTransformer<ResponseDescriptionOperationTransformer>();
 	options.AddSchemaTransformer<AddSchemaExamplesTransformer>();
 });

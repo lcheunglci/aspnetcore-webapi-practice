@@ -72,7 +72,8 @@ public class AuthorsController(
 	}
 
 	[HttpPatch("{authorId}")]
-	[ApiExplorerSettings(IgnoreApi = true)]
+	// [ApiExplorerSettings(IgnoreApi = true)]
+	[Tags("Authors", "Internal")]
 	public async Task<ActionResult<Author>> PartiallyUpdateAuthor(
 		Guid authorId,
 		JsonPatchDocument<AuthorForUpdate> patchDocument)

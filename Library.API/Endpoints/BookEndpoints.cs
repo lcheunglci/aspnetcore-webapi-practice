@@ -18,7 +18,8 @@ public static class BookEndpoints
 			.WithSummary("Get books for an author")
 			.WithDescription("Returns all books for a specific author")
 			.Produces<IEnumerable<Book>>(StatusCodes.Status200OK)
-			.Produces(StatusCodes.Status404NotFound);
+			.WithTags("Internal");
+			//.Produces(StatusCodes.Status404NotFound);
 		group.MapGet("{bookId:guid}", GetBook)
 				.WithName("GetBook")
 				.WithSummary("Get a book by id")
