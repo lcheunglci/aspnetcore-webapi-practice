@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Asp.Versioning;
 using AutoMapper;
 using Library.API.Models;
 using Library.API.Services;
@@ -10,25 +11,36 @@ public static class BookEndpoints
 {
 	public static RouteGroupBuilder MapBookEndpoints(this IEndpointRouteBuilder app)
 	{
+		var versionSet = app.NewApiVersionSet()
+			.HasApiVersion(new ApiVersion(1, 0))
+			.HasApiVersion(new ApiVersion(2, 0))
+			.ReportApiVersions()
+			.Build();
+
 		var group = app.MapGroup("api/authors/{authorId:guid}/books")
 			.WithTags("Books");
 
 		group.MapGet("", GetBooks)
+			.HasApiVersion(new ApiVersion(1, 0))
+			.HasApiVersion(new ApiVersion(2, 0))
 			.ExcludeFromDescription()
 			.WithSummary("Get books for an author")
 			.WithDescription("Returns all books for a specific author")
 			.Produces<IEnumerable<Book>>(StatusCodes.Status200OK)
 			.WithTags("Internal");
-			//.Produces(StatusCodes.Status404NotFound);
+		//.Produces(StatusCodes.Status404NotFound);
 		group.MapGet("{bookId:guid}", GetBook)
-				.WithName("GetBook")
-				.WithSummary("Get a book by id")
-				.WithDescription("Returns a single book with title and description for a specific author")
-				.Produces<Book>(StatusCodes.Status200OK)
-				.Produces(StatusCodes.Status404NotFound)
-				.ProducesProblem(StatusCodes.Status400BadRequest);
+			.HasApiVersion(new ApiVersion(1, 0))
+			.HasApiVersion(new ApiVersion(2, 0))
+			.WithName("GetBook")
+			.WithSummary("Get a book by id")
+			.WithDescription("Returns a single book with title and description for a specific author")
+			.Produces<Book>(StatusCodes.Status200OK)
+			.Produces(StatusCodes.Status404NotFound)
+			.ProducesProblem(StatusCodes.Status400BadRequest);
 
 		group.MapPost("", CreateBook)
+			.HasApiVersion(new ApiVersion(2, 0))
 			.WithSummary("Create a book for an author")
 			.WithDescription("Creates a new book for a specific author")
 			//.Accepts<BookForCreation>("application/json")

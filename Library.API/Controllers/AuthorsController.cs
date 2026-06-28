@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Asp.Versioning;
+using AutoMapper;
 using Library.API.Models;
 using Library.API.Services;
 using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
@@ -6,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Library.API.Controllers;
 
-[Route("api/authors")]
+[Route("api/v{version:apiVersion}/authors")]
 [ApiController]
 public class AuthorsController(
 	IAuthorRepository authorsRepository,
@@ -18,6 +19,8 @@ public class AuthorsController(
 		?? throw new ArgumentNullException(nameof(mapper));
 
 	[HttpGet]
+	[ApiVersion("1.0")]
+	[ApiVersion("2.0")]
 	public async Task<ActionResult<IEnumerable<Author>>> GetAuthors()
 	{
 		var authorsFromRepo = await _authorsRepository.GetAuthorsAsync();
@@ -33,6 +36,8 @@ public class AuthorsController(
 	/// <response code="404">The author was not found</response>
 	/// <response code="400">The request is invalid</response>
 	[HttpGet("{authorId}")]
+	[ApiVersion("1.0")]
+	[ApiVersion("2.0")]
 	[ProducesResponseType<Author>(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -50,6 +55,7 @@ public class AuthorsController(
 	}
 
 	[HttpPut("{authorId}")]
+	[ApiVersion("2.0")]
 	[Consumes("application/json")]
 	public async Task<ActionResult<Author>> UpdateAuthor(
 		Guid authorId,
@@ -72,6 +78,7 @@ public class AuthorsController(
 	}
 
 	[HttpPatch("{authorId}")]
+	[ApiVersion("2.0")]
 	// [ApiExplorerSettings(IgnoreApi = true)]
 	[Tags("Authors", "Internal")]
 	public async Task<ActionResult<Author>> PartiallyUpdateAuthor(

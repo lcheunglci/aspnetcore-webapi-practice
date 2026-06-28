@@ -1,4 +1,5 @@
-﻿using Library.API.Contexts;
+﻿using Asp.Versioning;
+using Library.API.Contexts;
 using Library.API.DocumentTransformers;
 using Library.API.Endpoints;
 using Library.API.Services;
@@ -10,9 +11,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers()
-    .AddXmlDataContractSerializerFormatters();
+	.AddXmlDataContractSerializerFormatters();
 
 builder.Services.AddProblemDetails();
+
+builder.Services.AddApiVersioning(
+	options =>
+	{
+		options.DefaultApiVersion = new ApiVersion(1, 0);
+		options.AssumeDefaultVersionWhenUnspecified = true;
+		options.ReportApiVersions = true;
+		options.ApiVersionReader = new UrlSegmentApiVersionReader();
+	}).AddMvc();
 
 // builder.Services.AddOpenApi("library-api");
 builder.Services.AddOpenApi(options =>
@@ -44,14 +54,14 @@ builder.Services.AddOpenApi(options =>
 });
 
 builder.Services.AddDbContext<LibraryContext>(
-    dbContextOptions => dbContextOptions.UseSqlite(
-        builder.Configuration["ConnectionStrings:LibraryDBConnectionString"]));
+	dbContextOptions => dbContextOptions.UseSqlite(
+		builder.Configuration["ConnectionStrings:LibraryDBConnectionString"]));
 
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 
 builder.Services.AddAutoMapper(config => { },
-    AppDomain.CurrentDomain.GetAssemblies());
+	AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
