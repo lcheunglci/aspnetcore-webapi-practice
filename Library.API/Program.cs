@@ -22,31 +22,26 @@ builder.Services.AddApiVersioning(
 		options.AssumeDefaultVersionWhenUnspecified = true;
 		options.ReportApiVersions = true;
 		options.ApiVersionReader = new UrlSegmentApiVersionReader();
-	}).AddMvc();
+	}).AddMvc()
+	.AddApiExplorer(options =>
+	{
+		options.GroupNameFormat = "'v'VVV";
+		options.SubstituteApiVersionInUrl = true;
+	});
 
 // builder.Services.AddOpenApi("library-api");
-builder.Services.AddOpenApi(options =>
+builder.Services.AddOpenApi("v1", options =>
 {
-	options.AddDocumentTransformer((document, context, cancellationToken) =>
-	{
-		document.Info = new()
-		{
-			Title = "Library API",
-			Version = "v1",
-			Description = "Through this API you can access authors and their books.",
-			Contact = new()
-			{
-				Name = "Test Author",
-				Email = "test@test.com"
-			},
-			License = new()
-			{
-				Name = "MIT License",
-				Url = new Uri("https://opensource.org/licenses/MIT")
-			}
-		};
-		return Task.CompletedTask;
-	});
+	options.AddDocumentTransformer<AddGeneralInformationTransformer>();
+	options.AddDocumentTransformer<AddDefaultResponseTypeTransformer>();
+	options.AddDocumentTransformer<RemoveInternalOperationsTransformer>();
+	options.AddOperationTransformer<ResponseDescriptionOperationTransformer>();
+	options.AddSchemaTransformer<AddSchemaExamplesTransformer>();
+});
+
+builder.Services.AddOpenApi("v2", options =>
+{
+	options.AddDocumentTransformer<AddGeneralInformationTransformer>();
 	options.AddDocumentTransformer<AddDefaultResponseTypeTransformer>();
 	options.AddDocumentTransformer<RemoveInternalOperationsTransformer>();
 	options.AddOperationTransformer<ResponseDescriptionOperationTransformer>();
@@ -71,8 +66,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-// app.MapOpenApi("/openapi/{documentName}.json");
-app.MapOpenApi();
+app.MapOpenApi("/openapi/{documentName}.json");
+// app.MapOpenApi();
 
 app.MapScalarApiReference(options =>
 {
