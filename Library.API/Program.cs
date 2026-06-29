@@ -38,6 +38,7 @@ builder.Services.AddApiVersioning(
 builder.Services.AddOpenApi("v1", options =>
 {
 	options.AddDocumentTransformer<AddGeneralInformationTransformer>();
+	options.AddDocumentTransformer<AddSecurityDescriptionTransformer>();
 	options.AddDocumentTransformer<AddDefaultResponseTypeTransformer>();
 	options.AddDocumentTransformer<RemoveInternalOperationsTransformer>();
 	options.AddOperationTransformer<ResponseDescriptionOperationTransformer>();
@@ -47,6 +48,7 @@ builder.Services.AddOpenApi("v1", options =>
 builder.Services.AddOpenApi("v2", options =>
 {
 	options.AddDocumentTransformer<AddGeneralInformationTransformer>();
+	options.AddDocumentTransformer<AddSecurityDescriptionTransformer>();
 	options.AddDocumentTransformer<AddDefaultResponseTypeTransformer>();
 	options.AddDocumentTransformer<RemoveInternalOperationsTransformer>();
 	options.AddOperationTransformer<ResponseDescriptionOperationTransformer>();
