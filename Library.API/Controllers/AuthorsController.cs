@@ -2,6 +2,7 @@
 using AutoMapper;
 using Library.API.Models;
 using Library.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch.SystemTextJson;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ namespace Library.API.Controllers;
 
 [Route("api/v{version:apiVersion}/authors")]
 [ApiController]
+[Authorize]
 public class AuthorsController(
 	IAuthorRepository authorsRepository,
 	IMapper mapper) : ControllerBase

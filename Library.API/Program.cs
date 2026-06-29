@@ -15,6 +15,11 @@ builder.Services.AddControllers()
 
 builder.Services.AddProblemDetails();
 
+builder.Services.AddAuthentication()
+	.AddJwtBearer();
+
+builder.Services.AddAuthorization();
+
 builder.Services.AddApiVersioning(
 	options =>
 	{
@@ -63,6 +68,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

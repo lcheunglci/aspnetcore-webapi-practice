@@ -18,7 +18,9 @@ public static class BookEndpoints
 			.Build();
 
 		var group = app.MapGroup("api/authors/{authorId:guid}/books")
-			.WithTags("Books");
+			.WithApiVersionSet(versionSet)
+			.WithTags("Books")
+			.RequireAuthorization();
 
 		group.MapGet("", GetBooks)
 			.HasApiVersion(new ApiVersion(1, 0))

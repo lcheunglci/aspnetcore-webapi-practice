@@ -19,7 +19,7 @@
 # Authors - Controller Based
 ##############################
 
-### GET all authors
+### GET all authors - Add authorization: dotnet user-jwts create --project Library.API
 GET {{baseUrl}}/api/authors
 Accept: application/json
 
