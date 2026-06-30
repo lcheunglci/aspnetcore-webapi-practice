@@ -25,7 +25,7 @@ namespace Library.API.Transformers
 					Name = "MIT License",
 					Url = new Uri("https://opensource.org/licenses/MIT")
 				}
-			}
+			};
 			return Task.CompletedTask;
 		}
 	}
