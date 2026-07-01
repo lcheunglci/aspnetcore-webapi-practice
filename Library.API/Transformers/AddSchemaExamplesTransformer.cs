@@ -17,7 +17,7 @@ namespace Library.API.DocumentTransformers
 			{
 				schema.Example = JsonNode.Parse($$"""
 				{
-					"id": "{{Guid.NewGuid()}}"
+					"id": "{Guid.NewGuid()}",
 					"firstName": "John",
 					"lastName": "Doe"
 				}
@@ -36,7 +36,7 @@ namespace Library.API.DocumentTransformers
 			{
 				schema.Example = JsonNode.Parse($$"""
 				{
-					"id": "{{Guid.NewGuid()}}",
+					"id": "{Guid.NewGuid()}",
 					"title": "Sample Book Title",
 					"description": "This is a sample book description."
 				}

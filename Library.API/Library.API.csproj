@@ -7,7 +7,7 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <UserSecretsId>38814cdf-1d06-474c-93dc-f5c37191c6de</UserSecretsId>
     <OpenApiGenerateDocument>true</OpenApiGenerateDocument>
-	<OpenApiDocumentsDirectory>${MSBuildProjectDirectory}\openapispecifications</OpenApiDocumentsDirectory>
+	<OpenApiDocumentsDirectory>$(MSBuildProjectDirectory)\openapispecifications</OpenApiDocumentsDirectory>
   </PropertyGroup>
 
   <ItemGroup>

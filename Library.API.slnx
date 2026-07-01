@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="Library.API\Library.API.csproj" />
+  <Project Path="Library.Client/Library.Client.csproj" />
   <Properties>
     <Property Name="Configuration|Platform=Debug|Any CPU" />
     <Property Name="Configuration|Platform=Release|Any CPU" />
