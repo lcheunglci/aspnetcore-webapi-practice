@@ -3,6 +3,7 @@ using System;
 using CourseLibrary.API.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -15,31 +16,38 @@ namespace CourseLibrary.API.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
+            modelBuilder
+                .HasAnnotation("ProductVersion", "6.0.5")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
             modelBuilder.Entity("CourseLibrary.API.Entities.Author", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<long>("DateOfBirth")
-                        .HasColumnType("INTEGER");
+                    b.Property<DateTimeOffset>("DateOfBirth")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("DateOfDeath")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("MainCategory")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -49,7 +57,7 @@ namespace CourseLibrary.API.Migrations
                         new
                         {
                             Id = new Guid("d28888e9-2ba9-473a-a40f-e38cb54f9b35"),
-                            DateOfBirth = 1279360106496000120L,
+                            DateOfBirth = new DateTimeOffset(new DateTime(1650, 7, 23, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, -7, 0, 0, 0)),
                             FirstName = "Berry",
                             LastName = "Griffin Beak Eldritch",
                             MainCategory = "Ships"
@@ -57,7 +65,7 @@ namespace CourseLibrary.API.Migrations
                         new
                         {
                             Id = new Guid("da2fd609-d754-4feb-8acd-c4f9ff13ba96"),
-                            DateOfBirth = 1277955145728000120L,
+                            DateOfBirth = new DateTimeOffset(new DateTime(1668, 5, 21, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, -7, 0, 0, 0)),
                             FirstName = "Nancy",
                             LastName = "Swashbuckler Rye",
                             MainCategory = "Rum"
@@ -65,7 +73,7 @@ namespace CourseLibrary.API.Migrations
                         new
                         {
                             Id = new Guid("2902b665-1190-4c70-9915-b9c2d7680450"),
-                            DateOfBirth = 1264753115136000060L,
+                            DateOfBirth = new DateTimeOffset(new DateTime(1701, 12, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, -8, 0, 0, 0)),
                             FirstName = "Eli",
                             LastName = "Ivory Bones Sweet",
                             MainCategory = "Singing"
@@ -73,7 +81,7 @@ namespace CourseLibrary.API.Migrations
                         new
                         {
                             Id = new Guid("102b566b-ba1f-404c-b2df-e2cde39ade09"),
-                            DateOfBirth = 1264248815616000060L,
+                            DateOfBirth = new DateTimeOffset(new DateTime(1702, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, -8, 0, 0, 0)),
                             FirstName = "Arnold",
                             LastName = "The Unseen Stafford",
                             MainCategory = "Singing"
@@ -81,7 +89,7 @@ namespace CourseLibrary.API.Migrations
                         new
                         {
                             Id = new Guid("5b3621c0-7b12-4e80-9c8b-3398cba7ee05"),
-                            DateOfBirth = 1264066560000000060L,
+                            DateOfBirth = new DateTimeOffset(new DateTime(1690, 11, 23, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, -8, 0, 0, 0)),
                             FirstName = "Seabury",
                             LastName = "Toxic Reyson",
                             MainCategory = "Maps"
@@ -89,7 +97,7 @@ namespace CourseLibrary.API.Migrations
                         new
                         {
                             Id = new Guid("2aadd2df-7caf-45ab-9355-7f6332985a87"),
-                            DateOfBirth = 1279813091328000120L,
+                            DateOfBirth = new DateTimeOffset(new DateTime(1723, 4, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, -7, 0, 0, 0)),
                             FirstName = "Rutherford",
                             LastName = "Fearless Cloven",
                             MainCategory = "General debauchery"
@@ -97,7 +105,7 @@ namespace CourseLibrary.API.Migrations
                         new
                         {
                             Id = new Guid("2ee49fe3-edf2-4f91-8409-3eb25ce6ca51"),
-                            DateOfBirth = 1280793378816000120L,
+                            DateOfBirth = new DateTimeOffset(new DateTime(1721, 10, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, -7, 0, 0, 0)),
                             FirstName = "Atherton",
                             LastName = "Crow Ridley",
                             MainCategory = "Rum"
@@ -108,19 +116,20 @@ namespace CourseLibrary.API.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AuthorId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasMaxLength(1500)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(1500)");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 

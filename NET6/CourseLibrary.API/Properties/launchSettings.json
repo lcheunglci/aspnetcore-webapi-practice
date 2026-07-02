@@ -4,22 +4,22 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:7499",
+      "applicationUrl": "http://localhost:20525",
       "sslPort": 0
     }
   },
   "profiles": {
     "CourseLibrary.API": {
       "commandName": "Project",
+      "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:5000",
+      "applicationUrl": "http://localhost:51044",
       "dotnetRunMessages": true
     },
     "IIS Express": {
       "commandName": "IISExpress",
-      "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

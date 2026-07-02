@@ -1,25 +1,20 @@
-﻿using CourseLibrary.API.Entities;
-using CourseLibrary.API.Helpers;
-using CourseLibrary.API.ResourceParameters;
+﻿using CourseLibrary.API.Entities; 
 
-namespace CourseLibrary.API.Services
+namespace CourseLibrary.API.Services;
+
+public interface ICourseLibraryRepository
 {
-    public interface ICourseLibraryRepository
-    {
-        IEnumerable<Course> GetCourses(Guid authorId);
-        Course GetCourse(Guid authorId, Guid courseId);
-        void AddCourse(Guid authorId, Course course);
-        void UpdateCourse(Course course);
-        void DeleteCourse(Course course);
-        IEnumerable<Author> GetAuthors();
-        PagedList<Author> GetAuthors(AuthorsResourceParameters authorsResourceParameters);
-
-        Author GetAuthor(Guid authorId);
-        IEnumerable<Author> GetAuthors(IEnumerable<Guid> authorIds);
-        void AddAuthor(Author author);
-        void DeleteAuthor(Author author);
-        void UpdateAuthor(Author author);
-        bool AuthorExists(Guid authorId);
-        bool Save();
-    }
+    Task<IEnumerable<Course>> GetCoursesAsync(Guid authorId);
+    Task<Course> GetCourseAsync(Guid authorId, Guid courseId);
+    void AddCourse(Guid authorId, Course course);
+    void UpdateCourse(Course course);
+    void DeleteCourse(Course course);
+    Task<IEnumerable<Author>> GetAuthorsAsync();
+    Task<Author> GetAuthorAsync(Guid authorId);
+    Task<IEnumerable<Author>> GetAuthorsAsync(IEnumerable<Guid> authorIds);
+    void AddAuthor(Author author);
+    void DeleteAuthor(Author author);
+    void UpdateAuthor(Author author);
+    Task<bool> AuthorExistsAsync(Guid authorId);
+    Task<bool> SaveAsync();
 }
