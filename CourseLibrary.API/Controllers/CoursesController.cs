@@ -3,6 +3,7 @@ using AutoMapper;
 using CourseLibrary.API.Models;
 using CourseLibrary.API.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CourseLibrary.API.Controllers;
@@ -91,7 +92,39 @@ public class CoursesController(ICourseLibraryRepository courseLibraryRepository,
         return NoContent();
     }
 
-    [HttpDelete("{courseId}")]
+	[HttpPatch("{courseId}")]
+	public async Task<IActionResult> PartiallyUpdateCourseForAuthor(
+		Guid authorId,
+		Guid courseId,
+		JsonPatchDocument<CourseForUpdateDto> patchDocument)
+	{
+		if (!await _courseLibraryRepository.AuthorExistsAsync(authorId))
+		{
+			return NotFound();
+		}
+
+		var courseForAuthorFromRepo = await _courseLibraryRepository.GetCourseAsync(authorId, courseId);
+
+		if (courseForAuthorFromRepo == null)
+		{
+			return NotFound();
+		}
+
+		var courseToPatch = _mapper.Map<CourseForUpdateDto>(courseForAuthorFromRepo);
+
+		patchDocument.ApplyTo(courseToPatch);
+
+		_mapper.Map(courseToPatch, courseForAuthorFromRepo);
+
+		_courseLibraryRepository.UpdateCourse(courseForAuthorFromRepo);
+
+		await _courseLibraryRepository.SaveAsync();
+
+		return NoContent();
+	} 
+
+
+	[HttpDelete("{courseId}")]
     public async Task<ActionResult> DeleteCourseForAuthor(Guid authorId, Guid courseId)
     {
         if (!await _courseLibraryRepository.AuthorExistsAsync(authorId))
