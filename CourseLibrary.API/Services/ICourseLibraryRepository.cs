@@ -12,9 +12,9 @@ public interface ICourseLibraryRepository
     void UpdateCourse(Course course);
     void DeleteCourse(Course course);
 	Task<IEnumerable<Author>> GetAuthorsAsync();
-	Task<IEnumerable<Author>> GetAuthorsAsync(AuthorsResourceParameters authorsResourceParameters);
+	Task<PagedList<Author>> GetAuthorsAsync(AuthorsResourceParameters authorsResourceParameters);
 	Task<Author> GetAuthorAsync(Guid authorId);
-    Task<PagedList<Author>> GetAuthorsAsync(IEnumerable<Guid> authorIds);
+    Task<IEnumerable<Author>> GetAuthorsAsync(IEnumerable<Guid> authorIds);
     void AddAuthor(Author author);
     void DeleteAuthor(Author author);
     void UpdateAuthor(Author author);
