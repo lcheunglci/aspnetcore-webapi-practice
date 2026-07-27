@@ -66,6 +66,7 @@ public class AuthorsController(
 				return Url.Link("GetAuthors",
 					new
 					{
+						orderBy = authorsResourceParameters.OrderBy,
 						mainCategory = authorsResourceParameters.MainCategory,
 						searchQuery = authorsResourceParameters.SearchQuery,
 						pageNumber = authorsResourceParameters.PageNumber - 1,
@@ -75,6 +76,7 @@ public class AuthorsController(
 				return Url.Link("GetAuthors",
 					new
 					{
+						orderBy = authorsResourceParameters.OrderBy,
 						mainCategory = authorsResourceParameters.MainCategory,
 						searchQuery = authorsResourceParameters.SearchQuery,
 						pageNumber = authorsResourceParameters.PageNumber + 1,
@@ -84,6 +86,7 @@ public class AuthorsController(
 				return Url.Link("GetAuthors",
 					new
 					{
+						orderBy = authorsResourceParameters.OrderBy,
 						mainCategory = authorsResourceParameters.MainCategory,
 						searchQuery = authorsResourceParameters.SearchQuery,
 						pageNumber = authorsResourceParameters.PageNumber,
