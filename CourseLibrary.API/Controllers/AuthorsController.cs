@@ -1,4 +1,5 @@
 ﻿
+using System.Dynamic;
 using System.Text.Json;
 using AutoMapper;
 using CourseLibrary.API.Helpers;
@@ -36,6 +37,7 @@ public class AuthorsController : ControllerBase
 	public async Task<ActionResult<IEnumerable<AuthorDto>>> GetAuthors(
 		[FromQuery] AuthorsResourceParameters authorsResourceParameters)
 	{
+		// ExpandoObject
 
 		if (!_propertyMappingService.ValidMappingExistsFor<AuthorDto, Entities.Author>(authorsResourceParameters.OrderBy))
 		{
