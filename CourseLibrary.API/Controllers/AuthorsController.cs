@@ -1,6 +1,4 @@
-﻿
-using System.Dynamic;
-using System.Text.Json;
+﻿using System.Text.Json;
 using AutoMapper;
 using CourseLibrary.API.Helpers;
 using CourseLibrary.API.Models;
@@ -34,7 +32,7 @@ public class AuthorsController : ControllerBase
 
 	[HttpGet(Name = "GetAuthors")]
 	[HttpHead]
-	public async Task<ActionResult<IEnumerable<AuthorDto>>> GetAuthors(
+	public async Task<IActionResult> GetAuthors(
 		[FromQuery] AuthorsResourceParameters authorsResourceParameters)
 	{
 		// ExpandoObject
@@ -72,7 +70,7 @@ public class AuthorsController : ControllerBase
 			JsonSerializer.Serialize(paginationMetadata));
 
 		// return them
-		return Ok(_mapper.Map<IEnumerable<AuthorDto>>(authorsFromRepo));
+		return Ok(_mapper.Map<IEnumerable<AuthorDto>>(authorsFromRepo).ShapeData(authorsResourceParameters.Fields));
 	}
 
 	private string? CreateAuthorsResourceUri(
@@ -85,6 +83,7 @@ public class AuthorsController : ControllerBase
 				return Url.Link("GetAuthors",
 					new
 					{
+						field = authorsResourceParameters.Fields,
 						orderBy = authorsResourceParameters.OrderBy,
 						mainCategory = authorsResourceParameters.MainCategory,
 						searchQuery = authorsResourceParameters.SearchQuery,
@@ -95,6 +94,7 @@ public class AuthorsController : ControllerBase
 				return Url.Link("GetAuthors",
 					new
 					{
+						field = authorsResourceParameters.Fields,
 						orderBy = authorsResourceParameters.OrderBy,
 						mainCategory = authorsResourceParameters.MainCategory,
 						searchQuery = authorsResourceParameters.SearchQuery,
@@ -105,6 +105,7 @@ public class AuthorsController : ControllerBase
 				return Url.Link("GetAuthors",
 					new
 					{
+						field = authorsResourceParameters.Fields,
 						orderBy = authorsResourceParameters.OrderBy,
 						mainCategory = authorsResourceParameters.MainCategory,
 						searchQuery = authorsResourceParameters.SearchQuery,

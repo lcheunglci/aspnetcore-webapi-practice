@@ -5,7 +5,7 @@ namespace CourseLibrary.API.Helpers
 {
 	public static class IEnumerableExtensions
 	{
-		public static IEnumerable<ExpandoObject> ShapeData<TSource>(this IEnumerable<T> source, string? fields)
+		public static IEnumerable<ExpandoObject> ShapeData<TSource>(this IEnumerable<TSource> source, string? fields)
 		{
 			if (source == null)
 			{
