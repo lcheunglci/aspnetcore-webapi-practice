@@ -85,8 +85,42 @@ public class AuthorsController : ControllerBase
 		Response.Headers.Add("X-Pagination",
 			JsonSerializer.Serialize(paginationMetadata));
 
+		// create links
+		var links = CreateLinksForAuthors(authorsResourceParameters);
+
+		var shapedAuthors = _mapper.Map<IEnumerable<AuthorDto>>(authorsFromRepo)
+			.ShapeData(authorsResourceParameters.Fields);
+
+		var shapedAuthorsWithLinks = shapedAuthors.Select(author =>
+		{
+			var authorAsDictionary = author as IDictionary<string, object?>;
+			var authorLinks = CreateLinksForAuthor((Guid)authorAsDictionary["Id"]!, null);
+			authorAsDictionary.Add("links", authorLinks);
+			return authorAsDictionary;
+		});
+
+		var linkedCollectionResource = new
+		{
+			value = shapedAuthorsWithLinks,
+			links
+		};
+
 		// return them
-		return Ok(_mapper.Map<IEnumerable<AuthorDto>>(authorsFromRepo).ShapeData(authorsResourceParameters.Fields));
+		return Ok(linkedCollectionResource);
+	}
+
+	private IEnumerable<LinkDto> CreateLinksForAuthors(
+		AuthorsResourceParameters authorsResourceParameters)
+	{
+		var links  = new List<LinkDto>();
+		// self
+		links.Add(
+			new LinkDto(CreateAuthorsResourceUri(authorsResourceParameters,
+				ResourceUriType.Current),
+				"self",
+				"GET"));
+
+		return links;
 	}
 
 	private string? CreateAuthorsResourceUri(
@@ -117,6 +151,7 @@ public class AuthorsController : ControllerBase
 						pageNumber = authorsResourceParameters.PageNumber + 1,
 						pageSize = authorsResourceParameters.PageSize
 					});
+			case ResourceUriType.Current:
 			default:
 				return Url.Link("GetAuthors",
 					new
