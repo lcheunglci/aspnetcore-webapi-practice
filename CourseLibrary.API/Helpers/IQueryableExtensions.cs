@@ -1,4 +1,5 @@
-﻿using CourseLibrary.API.Services;
+﻿using System.Linq.Dynamic.Core;
+using CourseLibrary.API.Services;
 
 namespace CourseLibrary.API.Helpers
 {
@@ -72,7 +73,7 @@ namespace CourseLibrary.API.Helpers
 
 			}
 
-			return source.OrderBy(orderByString);
+			return source.OrderBy<T>(orderByString);
 		}
 	}
 }

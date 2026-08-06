@@ -127,9 +127,9 @@ public class AuthorsController : ControllerBase
 				"previousPage",
 				"GET"));
 
-
-			return links;
 		}
+
+		return links;
 	}
 
 	private string? CreateAuthorsResourceUri(
