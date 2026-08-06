@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using AutoMapper;
+using CourseLibrary.API.ActionContraints;
 using CourseLibrary.API.Helpers;
 using CourseLibrary.API.Models;
 using CourseLibrary.API.ResourceParameters;
@@ -274,7 +275,37 @@ public class AuthorsController : ControllerBase
 		return links;
 	}
 
+	[HttpPost(Name = "CreateAuthorWithDateOfDeath")]
+	[RequestHeaderMatchesMediaTypeAtrribute("Content-Type",
+		"application/vnd.marvin.authorforcreationwithdateofdeath+json")]
+	[Consumes("application/vnd.marvin.authorforcreationwithdateofdeath+json")]
+	public async Task<ActionResult<AuthorDto>> CreateAuthorWithDateOfDeath(
+		AuthorForCreationWithDateOfDeathDto author)
+	{
+		var authorEntity = _mapper.Map<Entities.Author>(author);
+
+		_courseLibraryRepository.AddAuthor(authorEntity);
+		await _courseLibraryRepository.SaveAsync();
+
+		var authorToReturn = _mapper.Map<AuthorDto>(authorEntity);
+
+		// create links
+		var links = CreateLinksForAuthor(authorToReturn.Id, null);
+
+		// add 
+		var linkedResourceToReturn = authorToReturn.ShapeData(null) as IDictionary<string, object?>;
+		linkedResourceToReturn.Add("links", links);
+
+		return CreatedAtRoute("GetAuthor",
+			new { authorId = linkedResourceToReturn["Id"] },
+			linkedResourceToReturn);
+	}
+
 	[HttpPost(Name = "CreateAuthor")]
+	[RequestHeaderMatchesMediaTypeAtrribute("Content-Type",
+		"application/json",
+		"application/vnd.marvin.authorforcreation+json")]
+	[Consumes("application/vnd.marvin.authorforcreation+json")]
 	public async Task<ActionResult<AuthorDto>> CreateAuthor(
 		AuthorForCreationDto author)
 	{
