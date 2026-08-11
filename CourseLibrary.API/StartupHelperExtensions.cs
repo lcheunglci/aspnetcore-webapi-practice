@@ -17,7 +17,7 @@ internal static class StartupHelperExtensions
 		{
 			configure.ReturnHttpNotAcceptable = true;
 			configure.CacheProfiles.Add("240SecondsCacheProfile",
-				new() {  Duration = 240  });
+				new() { Duration = 240 });
 		})
 		.AddNewtonsoftJson(setupAction =>
 		{
@@ -83,7 +83,17 @@ internal static class StartupHelperExtensions
 
 		builder.Services.AddResponseCaching();
 
-        builder.Services.AddResponseCaching();
+		builder.Services.AddHttpCacheHeaders(
+			(expirationModelOptions) =>
+			{
+				expirationModelOptions.MaxAge = 60;
+				expirationModelOptions.CacheLocation = Marvin.Cache.Headers.CacheLocation.Private;
+			},
+			(validationModelOptions) =>
+			{
+				validationModelOptions.MustRevalidate = true;
+			}
+		);
 
 		return builder.Build();
 	}
@@ -110,7 +120,7 @@ internal static class StartupHelperExtensions
 
 		app.UseResponseCaching();
 
-        app.UseHttpCacheHeaders();
+		app.UseHttpCacheHeaders();
 
 		app.UseAuthorization();
 
