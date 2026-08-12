@@ -1,0 +1,6 @@
+@TopLevelManagement_HostAddress = http://localhost:5152
+
+GET {{TopLevelManagement_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
