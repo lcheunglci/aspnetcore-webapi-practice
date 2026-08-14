@@ -57,5 +57,18 @@ namespace EmployeeManagement.Test
 			// Assert
 			Assert.IsType<InternalEmployee>(employee);
 		}
+
+		[Fact]
+		public void CreateEmployee_EmptyFirstName_ThrowsArgumentException()
+		{
+			// Arrange
+			var employeeFactory = new EmployeeFactory();
+
+			// Act and Asset
+			Assert.Throws<ArgumentException>(() =>
+			{
+				employeeFactory.CreateEmployee("", "Doe");
+			});
+		}
 	}
 }
