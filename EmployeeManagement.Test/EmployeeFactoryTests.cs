@@ -3,16 +3,22 @@ using EmployeeManagement.DataAccess.Entities;
 
 namespace EmployeeManagement.Test
 {
-	public class EmployeeFactoryTests
+	public class EmployeeFactoryTests : IDisposable
 	{
+		private EmployeeFactory _employeeFactory;
+
+		public EmployeeFactoryTests()
+		{
+			_employeeFactory = new EmployeeFactory();
+		}
+
 		[Fact]
 		public void CreateEmployee_ConstructInternalEmployee_SalaryMustBe2500()
 		{
-			// Arrange
-			var employeeFactory = new EmployeeFactory();
+			// Arrange (handled by constructor)
 
 			// Act
-			var employee = (InternalEmployee)employeeFactory.CreateEmployee("John", "Doe");
+			var employee = (InternalEmployee)_employeeFactory.CreateEmployee("John", "Doe");
 
 			// Assert
 			Assert.Equal(2500, employee.Salary);
@@ -21,11 +27,10 @@ namespace EmployeeManagement.Test
 		[Fact]
 		public void CreateEmployee_ConstructInternalEmployee_SalaryMustBeBetween2500And3000()
 		{
-			// Arrange
-			var employeeFactory = new EmployeeFactory();
+			// Arrange (handled by constructor)
 
 			// Act
-			var employee = (InternalEmployee)employeeFactory.CreateEmployee("John", "Doe");
+			var employee = (InternalEmployee)_employeeFactory.CreateEmployee("John", "Doe");
 
 			// Assert
 			Assert.InRange(employee.Salary, 2500, 3000);
@@ -34,11 +39,10 @@ namespace EmployeeManagement.Test
 		[Fact]
 		public void CreateEmployee_ConstructInternalEmployee_SalaryMustBeExternalEmployee()
 		{
-			// Arrange
-			var employeeFactory = new EmployeeFactory();
+			// Arrange (handled by constructor)
 
 			// Act
-			var employee = employeeFactory.CreateEmployee("John", "Doe", "Marvin", true);
+			var employee = _employeeFactory.CreateEmployee("John", "Doe", "Marvin", true);
 
 			// Assert
 			Assert.IsType<ExternalEmployee>(employee);
@@ -48,11 +52,10 @@ namespace EmployeeManagement.Test
 		[Fact]
 		public void CreateEmployee_ConstructInternalEmployee_SalaryMustBeInternalEmployee()
 		{
-			// Arrange
-			var employeeFactory = new EmployeeFactory();
+			// Arrange (handled by constructor)
 
 			// Act
-			var employee = employeeFactory.CreateEmployee("John", "Doe");
+			var employee = _employeeFactory.CreateEmployee("John", "Doe");
 
 			// Assert
 			Assert.IsType<InternalEmployee>(employee);
@@ -61,14 +64,19 @@ namespace EmployeeManagement.Test
 		[Fact]
 		public void CreateEmployee_EmptyFirstName_ThrowsArgumentException()
 		{
-			// Arrange
-			var employeeFactory = new EmployeeFactory();
+			// Arrange (handled by constructor)
+			
 
 			// Act and Asset
 			Assert.Throws<ArgumentException>(() =>
 			{
-				employeeFactory.CreateEmployee("", "Doe");
+				_employeeFactory.CreateEmployee("", "Doe");
 			});
+		}
+
+		public void Dispose()
+		{
+			// clean up setup code if needed
 		}
 	}
 }
