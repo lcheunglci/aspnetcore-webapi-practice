@@ -66,5 +66,40 @@ namespace EmployeeManagement.Test
 			Assert.Equal("GetInternalEmployees", redirectResult.ActionName);
 			Assert.Equal("ProtectedInternalEmployees", redirectResult.ControllerName);
 		}
+
+
+		[Fact]
+		public async Task GetProtectedInternalEmployee_UserIsNotAdmin_MustRedirectToInternalEmployees()
+		{
+			// Arrange
+			var employeeServiceMock = new Mock<IEmployeeService>();
+			var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<EmployeeProfile>(), new LoggerFactory());
+
+			var mapper = new Mapper(mapperConfiguration);
+
+			var controller = new DemoInternalEmployeesController(employeeServiceMock.Object, mapper);
+
+			var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim>()
+			{
+				new Claim(ClaimTypes.Name, "Kevin"),
+				new Claim(ClaimTypes.Role, "User")
+			}, "TestAuthentication"));
+
+			controller.ControllerContext = new ControllerContext()
+			{
+				HttpContext = new DefaultHttpContext()
+				{
+					User = claimsPrincipal
+				}
+			};
+
+			// Act
+			var result = controller.GetProtectedInternalEmployees();
+
+			// Assert
+			var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+			Assert.Equal("GetInternalEmployees", redirectResult.ActionName);
+			Assert.Equal("InternalEmployees", redirectResult.ControllerName);
+		}
 	}
 }
