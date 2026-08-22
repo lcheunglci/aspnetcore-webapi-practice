@@ -71,3 +71,5 @@ app.Run();
 
 
 public record CourseForCreationDto(string? Title);
+
+public partial class Program { } // For integration testing
