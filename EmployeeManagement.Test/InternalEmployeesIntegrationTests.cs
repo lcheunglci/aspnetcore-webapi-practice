@@ -1,4 +1,7 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net;
+using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
 using EmployeeManagement.DataAccess.Entities;
 using EmployeeManagement.Test.Fixtures;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -32,6 +35,68 @@ namespace EmployeeManagement.Test
 			Assert.NotNull(employees);
 			Assert.True(employees.Count >= 2);
 
+		}
+
+		[Fact]
+		public async Task  CreateInternalEmployee_ValidInput_MustReturn201WithLocationHeader()
+		{
+			// Arrange
+			var employeeForCreation = new { FirstName = "Test", LastName = "Employee" };
+			var content = new StringContent(JsonSerializer.Serialize(employeeForCreation));
+
+			// Act
+			var response = await _httpClient.PostAsync(
+				"/api/internalemployees", content, TestContext.Current.CancellationToken);
+
+			// Assert
+			Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+
+			var createdEmployee = await response.Content.ReadFromJsonAsync<InternalEmployee>(TestContext.Current.CancellationToken);
+			Assert.NotNull(createdEmployee);
+			Assert.Equal("Test", createdEmployee.FirstName);
+			Assert.Equal("Employee", createdEmployee.LastName);
+			Assert.Equal(2500, createdEmployee.Salary);
+			Assert.NotEqual(Guid.Empty, createdEmployee.Id);
+		}
+
+		[Fact]
+		public async Task CreateInternalEmployee_ValidInput_MustRoundTrip()
+		{
+			// Arrange
+			var employeeForCreation = new { FirstName = "Roundtrip", LastName = "Test" };
+			var content = new StringContent(JsonSerializer.Serialize(employeeForCreation), Encoding.UTF8, "application/json");
+
+			// Act - create
+			var createResponse = await _httpClient.PostAsync(
+				"/api/internalemployees", content, TestContext.Current.CancellationToken);
+
+			Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
+			Assert.NotNull(createResponse.Headers.Location);
+
+			// Assert
+			var getResponse = await _httpClient.GetAsync(
+				createResponse.Headers.Location, TestContext.Current.CancellationToken);
+			
+			var retrievedEmployee = await createResponse.Content.ReadFromJsonAsync<InternalEmployee>(TestContext.Current.CancellationToken);
+			Assert.NotNull(retrievedEmployee);
+			Assert.Equal("Roundtrip", retrievedEmployee.FirstName);
+			Assert.Equal("Test", retrievedEmployee.LastName);
+			Assert.Equal(2500, retrievedEmployee.Salary);
+			Assert.NotEqual(Guid.Empty, retrievedEmployee.Id);
+		}
+
+		[Fact]
+		public async Task GetInternalEmployee_NonExistentId_MustReturn404NotFound()
+		{
+			// Arrange
+			var nonExistentId = Guid.NewGuid();
+
+			// Act
+			var response = await _httpClient.GetAsync(
+				$"/api/internalemployees/{nonExistentId}", TestContext.Current.CancellationToken);
+
+			// Assert
+			Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 		}
 	}
 }
