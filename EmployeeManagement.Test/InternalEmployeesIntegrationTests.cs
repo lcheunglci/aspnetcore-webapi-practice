@@ -91,12 +91,60 @@ namespace EmployeeManagement.Test
 			// Arrange
 			var nonExistentId = Guid.NewGuid();
 
-			// Act
+			// d
 			var response = await _httpClient.GetAsync(
 				$"/api/internalemployees/{nonExistentId}", TestContext.Current.CancellationToken);
 
 			// Assert
 			Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+		}
+
+		[Fact]
+		public async Task GetInternalEmployees_WhenCalled_ResponseContentTypeMustBeJson()
+		{
+			// Arrange and Act
+			var response = await _httpClient.GetAsync("/api/internalemployee",
+				TestContext.Current.CancellationToken);
+
+			// Assert
+			response.EnsureSuccessStatusCode();
+			Assert.Equal("application/json; charset=utf-8",
+				response.Content.Headers.ContentType?.ToString());
+		}
+
+		[Fact]
+		public async Task GetInternalEmployees_WhenCalled_MustContainSecurityHeaders()
+		{
+			// Arrange and Act
+			var response = await _httpClient.GetAsync("/api/internalemployees",
+				TestContext.Current.CancellationToken);
+
+			// Assert
+			response.EnsureSuccessStatusCode();
+
+			Assert.True(response.Headers.Contains("X-Content-Type-Options"));
+			Assert.Equal("nosniff",
+				response.Headers.GetValues("X-Content-Type-Options").First());
+
+			Assert.True(response.Headers.Contains("Content-Security-Policy"));
+			Assert.Equal("default-src 'self';frame-ancestors 'none';",
+				response.Headers.GetValues("Content-Security-Policy").First());
+		}
+
+		[Fact]
+		public async Task GetInternalEmployees_AcceptHeaderXml_MustReturn406NotAcceptable()
+		{
+			// Arrange
+			var request = new HttpRequestMessage(
+				HttpMethod.Get, "/api/internalemployees");
+			request.Headers.Accept.Add(
+				new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/xml"));
+
+			// Act
+			var response = await _httpClient.SendAsync(request, TestContext.Current.CancellationToken);
+
+			// Assert
+			Assert.Equal(HttpStatusCode.NotAcceptable, response.StatusCode);
 		}
 	}
 }
