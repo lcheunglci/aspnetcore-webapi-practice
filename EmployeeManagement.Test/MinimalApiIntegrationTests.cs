@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using EmployeeManagement.Test.Fixtures;
 
 namespace EmployeeManagement.Test;
@@ -30,6 +32,24 @@ public class MinimalApiIntegrationTests : IClassFixture<CustomWebApplicationFact
 		Assert.Contains(courses, c => c.Title == "Company Introduction");
 	}
 
-	private record CourseResponse(Guid id, string title);
+	[Fact]
+	public async Task CreateCourse_ValidInput_MustReturn201WithCreatedCourse()
+	{
+		// Arrange
+		var courseForCreation = new { Title = "Integration Testing 101" };
+		var content = new StringContent(JsonSerializer.Serialize(courseForCreation), Encoding.UTF8, "application/json");
+
+		// Act
+		var response = await _httpClient.PostAsync("/api/courses", content, TestContext.Current.CancellationToken);
+
+		// Assert
+		Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+		var createdCourse = await response.Content.ReadFromJsonAsync<CourseResponse>(TestContext.Current.CancellationToken);
+		Assert.NotNull(createdCourse);
+		Assert.Equal("Integration Testing 101", createdCourse.Title);
+		Assert.NotEqual(Guid.Empty, createdCourse.Id);
+	}
+
+	private record CourseResponse(Guid Id, string Title);
 }
 
