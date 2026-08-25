@@ -50,6 +50,20 @@ public class MinimalApiIntegrationTests : IClassFixture<CustomWebApplicationFact
 		Assert.NotEqual(Guid.Empty, createdCourse.Id);
 	}
 
+	[Fact]
+	public async Task CreateCourse_MissingTitle_MustReturnValidationProblem()
+	{
+		// Arrange
+		var courseForCreation = new { Title = "" };
+		var content = new StringContent(JsonSerializer.Serialize(courseForCreation), Encoding.UTF8, "application/json");
+
+		// Act
+		var response = await _httpClient.PostAsync("/api/courses", content, TestContext.Current.CancellationToken);
+
+		// Assert
+		Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+	}
+
 	private record CourseResponse(Guid Id, string Title);
 }
 
