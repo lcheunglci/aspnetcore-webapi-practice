@@ -38,7 +38,7 @@ namespace EmployeeManagement.Test
 		}
 
 		[Fact]
-		public async Task  CreateInternalEmployee_ValidInput_MustReturn201WithLocationHeader()
+		public async Task CreateInternalEmployee_ValidInput_MustReturn201WithLocationHeader()
 		{
 			// Arrange
 			var employeeForCreation = new { FirstName = "Test", LastName = "Employee" };
@@ -76,7 +76,7 @@ namespace EmployeeManagement.Test
 			// Assert
 			var getResponse = await _httpClient.GetAsync(
 				createResponse.Headers.Location, TestContext.Current.CancellationToken);
-			
+
 			var retrievedEmployee = await createResponse.Content.ReadFromJsonAsync<InternalEmployee>(TestContext.Current.CancellationToken);
 			Assert.NotNull(retrievedEmployee);
 			Assert.Equal("Roundtrip", retrievedEmployee.FirstName);
@@ -145,6 +145,33 @@ namespace EmployeeManagement.Test
 
 			// Assert
 			Assert.Equal(HttpStatusCode.NotAcceptable, response.StatusCode);
+		}
+
+		[Fact]
+		public async Task GetNonExistentRoute_MustReturn404()
+		{
+			// Arrange & Act
+			var response = await _httpClient.GetAsync("/api/nonexistent",
+				TestContext.Current.CancellationToken);
+
+			// Assert
+			Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+		}
+
+		[Fact]
+		public async Task CreateInternalEmployee_MissingFirstName_MustReturn400BadRequest()
+		{
+			// Arrange
+			var invalidEmployee = new { LastName = "Employee" };
+			var content = new StringContent(JsonSerializer.Serialize(invalidEmployee), Encoding.UTF8, "application/json");
+
+			// Act
+			var response = await _httpClient.PostAsync(
+				"api/internalemployees", content, TestContext.Current.CancellationToken);
+
+			// Assert
+			Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
 		}
 	}
 }
