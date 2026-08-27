@@ -2,15 +2,19 @@
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using EmployeeManagement.Business;
 using EmployeeManagement.DataAccess.Entities;
 using EmployeeManagement.Test.Fixtures;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
 
 namespace EmployeeManagement.Test
 {
 	public class InternalEmployeesIntegrationTests : IClassFixture<CustomWebApplicationFactory>
 	{
 		private readonly HttpClient _httpClient;
+		private CustomWebApplicationFactory _factory;
 
 		public InternalEmployeesIntegrationTests(CustomWebApplicationFactory factory)
 		{
@@ -19,6 +23,7 @@ namespace EmployeeManagement.Test
 				{
 					AllowAutoRedirect = false
 				});
+			_factory = factory;
 		}
 
 		[Fact]
@@ -171,6 +176,37 @@ namespace EmployeeManagement.Test
 
 			// Assert
 			Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+		}
+
+		[Fact]
+		public async Task GetInternalEmployees_ServiceThrows_MustReturn500()
+		{
+			// Arrange
+			var employeeServiceMock = new Mock<IEmployeeService>();
+			employeeServiceMock
+				.Setup(m => m.FetchInternalEmployeesAsync())
+				.ThrowsAsync(new Exception("Database connection failed"));
+
+			var client = _factory.WithWebHostBuilder(builder =>
+			{
+				builder.ConfigureServices(services =>
+				{
+					var descriptor = services.SingleOrDefault(
+						d => d.ServiceType == typeof(IEmployeeService));
+					if (descriptor != null)
+					{
+						services.Remove(descriptor);
+					}
+					services.AddScoped(_ => employeeServiceMock.Object);
+				});
+			}).CreateClient();
+
+			// Act
+			var response = await client.GetAsync("/api/internalemployees");
+
+			// Assert
+			Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
 
 		}
 	}
