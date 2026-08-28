@@ -1,10 +1,12 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using EmployeeManagement.Business;
 using EmployeeManagement.DataAccess.Entities;
 using EmployeeManagement.Test.Fixtures;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -25,6 +27,29 @@ namespace EmployeeManagement.Test
 				});
 			_factory = factory;
 		}
+
+
+		private HttpClient CreateAuthenticatedClient(IList<Claim> claims)
+		{
+			TestAuthHandler.Claims = claims;
+			return _factory.WithWebHostBuilder(builder =>
+			{
+				builder.ConfigureServices(services =>
+				{
+					services.AddAuthentication(options =>
+					{
+						options.DefaultAuthenticateScheme = TestAuthHandler.SchemeName;
+						options.DefaultChallengeScheme = TestAuthHandler.SchemeName;
+						options.DefaultScheme = TestAuthHandler.SchemeName;
+					}).AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(
+						TestAuthHandler.SchemeName, options => { });
+				});
+			}).CreateClient(new WebApplicationFactoryClientOptions()
+			{
+				AllowAutoRedirect = false
+			});
+		}
+	}
 
 		[Fact]
 		public async Task GetInternalEmployees_WhenCalled_MustReturn200Ok()
@@ -207,7 +232,9 @@ namespace EmployeeManagement.Test
 
 			// Assert
 			Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-
 		}
+
 	}
+
+
 }
