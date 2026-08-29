@@ -234,6 +234,48 @@ namespace EmployeeManagement.Test
 			Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
 		}
 
+		[Fact]
+		public async Task GetProtectedEndpoint_WithAdminRole_MustReturnRedirect()
+		{
+			// Arrange
+			var client = CreateAuthenticatedClient(new List<Claim>()
+			{
+				new Claim(ClaimTypes.Name, "Bob"),
+				new Claim(ClaimTypes.Role, "Admin")
+			});
+
+			// Act
+			var response = await client.GetAsync("/api/demointernalemployees",
+				TestContext.Current.CancellationToken);
+
+			// Assert
+			Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+			var location = response.Headers.Location?.ToString() ?? "";
+			Assert.Contains("protectedinternalemployees", location, StringComparison.OrdinalIgnoreCase);
+		}
+
+		[Fact]
+		public async Task GetProtectedEndpoint_WithUserRole_MustReturnRedirectToInternalEmployee()
+		{
+			// Arrange
+			var client = CreateAuthenticatedClient(new List<Claim>()
+			{
+				new Claim(ClaimTypes.Name, "Bob"),
+				new Claim(ClaimTypes.Role, "User")
+			});
+
+			// Act
+			var response = await client.GetAsync("/api/demointernalemployees",
+				TestContext.Current.CancellationToken);
+
+			// Assert
+			Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+			var location = response.Headers.Location?.ToString() ?? "";
+			Assert.DoesNotContain("protectedinternalemployees", location, StringComparison.OrdinalIgnoreCase);
+			Assert.Contains("internalemployees", location, StringComparison.OrdinalIgnoreCase);
+		}
+
+
 	}
 
 
