@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using EmployeeManagement.Business;
 using EmployeeManagement.DataAccess.Entities;
+using EmployeeManagement.Models;
 using EmployeeManagement.Test.Fixtures;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -276,7 +277,60 @@ namespace EmployeeManagement.Test
 		}
 
 
+		[Fact]
+		public async Task GetProtectedEndpoint_NoAuthentication_MustReturn401Unauthorized()
+		{
+			// Arrange
+			var client = _factory.CreateClient(new WebApplicationFactoryClientOptions()
+			{
+				AllowAutoRedirect = false
+			});
+
+			// Act
+			var response = await client.GetAsync("/api/protectedinternalemployees",
+				TestContext.Current.CancellationToken);
+
+			// Assert
+			Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+		}
+
+		[Fact]
+		public async Task GetProtectedEndpoint_AuthenticatedWithoutAdminRole_MustReturn403Forbidden()
+		{
+			// Arrange
+			var client = CreateAuthenticatedClient(new List<Claim>()
+			{
+				new Claim(ClaimTypes.Name, "Bob"),
+				new Claim(ClaimTypes.Role, "User")
+			});
+
+			// Act
+			var response = await client.GetAsync("/api/protectedinternalemployees",
+				TestContext.Current.CancellationToken);
+
+			// Assert
+			Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+		}
+
+		[Fact]
+		public async Task GetProtectedEndpoint_AuthenticatedWithAdminRole_MustReturn200Ok()
+		{
+			// Arrange
+			var client = CreateAuthenticatedClient(new List<Claim>()
+			{
+				new Claim(ClaimTypes.Name, "Bob"),
+				new Claim(ClaimTypes.Role, "Admin")
+			});
+
+			// Act
+			var response = await client.GetAsync("/api/protectedinternalemployees",
+				TestContext.Current.CancellationToken);
+
+			// Assert
+			response.EnsureSuccessStatusCode();
+			var employees = await response.Content.ReadFromJsonAsync<List<InternalEmployeeDto>>(TestContext.Current.CancellationToken);
+			Assert.NotNull(employees);
+		}
+
 	}
-
-
 }
