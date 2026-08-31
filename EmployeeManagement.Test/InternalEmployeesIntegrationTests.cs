@@ -332,5 +332,19 @@ namespace EmployeeManagement.Test
 			Assert.NotNull(employees);
 		}
 
+		[Fact]
+		public async Task GetUnprotectedEndpoint_NoAuthentication_MustReturn200()
+		{
+			// Arrange
+			var client = _factory.CreateClient();
+
+			// Act
+			var response = await client.GetAsync("/api/internalemployees",
+				TestContext.Current.CancellationToken);
+
+			// Assert
+			response.EnsureSuccessStatusCode();
+		}
+
 	}
 }
