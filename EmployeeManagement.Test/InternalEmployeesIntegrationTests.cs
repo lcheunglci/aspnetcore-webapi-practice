@@ -8,6 +8,7 @@ using EmployeeManagement.DataAccess.Entities;
 using EmployeeManagement.Models;
 using EmployeeManagement.Test.Fixtures;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -344,6 +345,27 @@ namespace EmployeeManagement.Test
 
 			// Assert
 			response.EnsureSuccessStatusCode();
+		}
+
+		[Fact]
+		public async Task CreateInternalEmployee_MissingRequiredFields_MustReturnProblemDetails()
+		{
+			// Arrange
+			var invalidEmployee = new { };
+			var content = new StringContent(
+				JsonSerializer.Serialize(invalidEmployee),
+				Encoding.UTF8, "application/json");
+
+			// Act
+			var response = await _httpClient.PostAsync("/api/internalemployees", content);
+
+			// Assert
+			Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+			var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+			Assert.NotNull(problemDetails);
+			Assert.Equal(400, problemDetails.Status);
+			Assert.NotEmpty(problemDetails.Errors);
 		}
 
 	}
