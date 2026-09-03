@@ -106,11 +106,13 @@ namespace EmployeeManagement.Test
 			Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
 			Assert.NotNull(createResponse.Headers.Location);
 
-			// Assert
+			// Act - read back using the Location header 
 			var getResponse = await _httpClient.GetAsync(
 				createResponse.Headers.Location, TestContext.Current.CancellationToken);
 
-			var retrievedEmployee = await createResponse.Content.ReadFromJsonAsync<InternalEmployee>(TestContext.Current.CancellationToken);
+			// Assert
+			getResponse.EnsureSuccessStatusCode();
+			var retrievedEmployee = await getResponse.Content.ReadFromJsonAsync<InternalEmployee>(TestContext.Current.CancellationToken);
 			Assert.NotNull(retrievedEmployee);
 			Assert.Equal("Roundtrip", retrievedEmployee.FirstName);
 			Assert.Equal("Test", retrievedEmployee.LastName);
@@ -401,6 +403,57 @@ namespace EmployeeManagement.Test
 				await transaction.RollbackAsync(TestContext.Current.CancellationToken);
 
 			}
+		}
+
+		[Fact]
+		public async Task PromoteEmployee_EligibleEmployee_JobLevelMustIncrease()
+		{
+			// Arrange - first, get a known employee
+			var getResponse = await _httpClient.GetAsync("/api/internalemployees",
+				TestContext.Current.CancellationToken);
+			getResponse.EnsureSuccessStatusCode();
+			var employees = await getResponse.Content.ReadFromJsonAsync<List<InternalEmployeeDto>>(TestContext.Current.CancellationToken);
+			Assert.NotNull(employees);
+			var employee = employees.First();
+			var originalJobLevel = employee.JobLevel;
+
+			// Arrange - set up a client with a mocked promotion service
+			var promotionServiceMock = new Mock<IPromotionService>();
+			promotionServiceMock
+				.Setup(m => m.PromoteInternalEmployeeAsync(
+					It.IsAny<InternalEmployee>()))
+				.ReturnsAsync(true)
+				.Callback<InternalEmployee>(e => e.JobLevel++);
+
+			var client = _factory.WithWebHostBuilder(builder =>
+			{
+				builder.ConfigureServices(services =>
+				{
+					var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(IPromotionService));
+					if (descriptor != null)
+					{
+						services.Remove(descriptor);
+						services.AddScoped(_ => promotionServiceMock.Object);
+					}
+				});
+			}).CreateClient();
+
+			var promotionRequest = new { EmployeeId = employee.Id };
+			var content = new StringContent(
+				JsonSerializer.Serialize(promotionRequest),
+				Encoding.UTF8, "application/json");
+
+
+			// Act - promote
+			var promoteResponse = await client.PostAsync(
+				"/api/promotion", content, TestContext.Current.CancellationToken);
+
+			// Assert
+			promoteResponse.EnsureSuccessStatusCode();
+			var result = await promoteResponse.Content.ReadFromJsonAsync<PromotionResultDto>(TestContext.Current.CancellationToken);
+			Assert.NotNull(result);
+			Assert.Equal(employee.Id, result.EmployeeId);
+			Assert.Equal(originalJobLevel + 1, result.JobLevel);
 		}
 
 	}
