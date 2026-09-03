@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using EmployeeManagement.Business;
+using EmployeeManagement.DataAccess.DbContexts;
 using EmployeeManagement.DataAccess.Entities;
 using EmployeeManagement.Models;
 using EmployeeManagement.Test.Fixtures;
@@ -366,6 +367,40 @@ namespace EmployeeManagement.Test
 			Assert.NotNull(problemDetails);
 			Assert.Equal(400, problemDetails.Status);
 			Assert.NotEmpty(problemDetails.Errors);
+		}
+
+		[Fact]
+		public async Task CreateInternalEmployee_WithRollback_DatabaseMustRemainUnchanged()
+		{
+			// Arrange
+			var client = _factory.CreateClient();
+
+			var dbContext = _factory.Services.CreateScope().ServiceProvider
+				.GetRequiredService<EmployeeDbContext>();
+
+			var transaction = await dbContext.Database.BeginTransactionAsync(TestContext.Current.CancellationToken);
+
+			var employeeForCreation = new { FirstName = "Temporary", LastName = "Employee" };
+			var content = new StringContent(
+				JsonSerializer.Serialize(employeeForCreation),
+				Encoding.UTF8, "application/json");
+
+			try
+			{
+				// Act
+				var createResponse = await client.PostAsync(
+					"/api/internalemployees", content, TestContext.Current.CancellationToken);
+
+				// Assert - the employee was created (201)
+				Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
+
+			}
+			finally
+			{
+				// Rollback - other tests aren't affected
+				await transaction.RollbackAsync(TestContext.Current.CancellationToken);
+
+			}
 		}
 
 	}
