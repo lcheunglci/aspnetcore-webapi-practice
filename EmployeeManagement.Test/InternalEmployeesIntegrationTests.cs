@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using System.Security.Claims;
+using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Text.Json;
 using EmployeeManagement.Business;
@@ -454,6 +455,43 @@ namespace EmployeeManagement.Test
 			Assert.NotNull(result);
 			Assert.Equal(employee.Id, result.EmployeeId);
 			Assert.Equal(originalJobLevel + 1, result.JobLevel);
+		}
+
+		[Fact]
+		public async Task CreatePromotion_EmployeeEligible_MustReturnOkWithResult()
+		{
+			// Arrange
+			var promotionServiceMock = new Mock<IPromotionService>();
+			promotionServiceMock.Setup(m => m.PromoteInternalEmployeeAsync(It.IsAny<InternalEmployee>()))
+				.ReturnsAsync(true)
+				.Callback<InternalEmployee>(e => e.JobLevel++);
+
+			var client = _factory.WithWebHostBuilder(builder =>
+			{
+				builder.ConfigureServices(services =>
+				{
+					var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(IPromotionService));
+					if (descriptor != null)
+					{
+						services.Remove(descriptor);
+					}
+					services.AddScoped(_ => promotionServiceMock.Object);
+				});
+			}).CreateClient();
+
+			var promotionRequest = new
+			{
+				EmployeeId = "72f2f5fe-e50c-4966-8420-d50258aefdcb"
+			};
+			var content = new StringContent(
+				JsonSerializer.Serialize(promotionRequest),
+				Encoding.UTF8, "application/json");
+
+			// Act
+			var response = await client.PostAsync("/api/promotions", content, TestContext.Current.CancellationToken);
+
+			// Assert
+			response.EnsureSuccessStatusCode();
 		}
 
 	}
