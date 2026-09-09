@@ -1,0 +1,38 @@
+﻿using CityInfo.API.Entities;
+using CityInfo.API.Models;
+
+namespace CityInfo.API.Services;
+
+public interface ICityInfoRepository
+{
+    Task<IEnumerable<City>> GetCitiesAsync(CancellationToken cancellationToken);
+    Task<IEnumerable<City>> GetCitiesReadOnlyAsync(CancellationToken cancellationToken);
+    Task<(IEnumerable<City>, PaginationMetadata?)> GetCitiesReadOnlyAsync(string? name, 
+        string? searchQuery,
+        int pageNumber,
+        int pageSize,
+        CancellationToken cancellationToken);
+
+    Task<bool> CityExistsAsync(int cityId,
+        CancellationToken cancellationToken);
+    Task<City?> GetCityAsync(int cityId, 
+        bool includePointsOfInterest,
+        CancellationToken cancellationToken);
+    Task<IEnumerable<PointOfInterest>> GetPointsOfInterestForCityAsync(int cityId,
+        CancellationToken cancellationToken);
+    Task<PointOfInterest?> GetPointOfInterestForCityAsync(int cityId,
+        int pointOfInterestId,
+        CancellationToken cancellationToken);
+    Task AddPointOfInterestForCityAsync(int cityId,
+        PointOfInterest pointOfInterest,
+        CancellationToken cancellationToken);
+    void DeletePointOfInterest(PointOfInterest pointOfInterest);
+    Task<int> UpdatePointsOfInterestDescriptionForCityAsync(int cityId, 
+        string newDescription,
+        CancellationToken cancellationToken);
+    Task<int> DeleteAllPointsOfInterestForCityAsync(int cityId,
+        CancellationToken cancellationToken);
+
+    Task<bool> SaveChangesAsync(CancellationToken cancellation);
+
+}
