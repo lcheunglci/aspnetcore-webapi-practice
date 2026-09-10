@@ -8,7 +8,9 @@ namespace CityInfo.API.Controllers;
 
 [Route("api/cities/{cityId}/pointsofinterest")]
 [ApiController]
-public class PointsOfInterestController(IMailService mailService,
+public class PointsOfInterestController(
+	ILogger<PointsOfInterestController> logger,
+	IMailService mailService,
     ICityInfoRepository cityInfoRepository,
     IMapper mapper, 
     IPointOfInterestService pointOfInterestService) : ControllerBase
@@ -17,6 +19,7 @@ public class PointsOfInterestController(IMailService mailService,
     public async Task<ActionResult<IEnumerable<PointOfInterestDto>>> GetPointsOfInterest(int cityId,
         CancellationToken cancellationToken = default)
     {
+		logger.LogInformation("Getting points of interest for city with id {cityId}.", cityId);
         if (!await cityInfoRepository.CityExistsAsync(cityId, cancellationToken))
         {
             return NotFound();
