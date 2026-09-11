@@ -2,14 +2,23 @@
 using CityInfo.API.Services;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+
+Log.Logger = new LoggerConfiguration()
+	.MinimumLevel.Debug()
+	.WriteTo.Console()
+	.WriteTo.File("logs/cityinfo.txt", rollingInterval: RollingInterval.Day)
+	.CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
+//builder.Logging.ClearProviders();
+//builder.Logging.AddConsole();
+
+builder.Host.UseSerilog();
 
 // Add services to the container.
 builder.Services.AddControllers()
-    .AddXmlDataContractSerializerFormatters();
+	.AddXmlDataContractSerializerFormatters();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -23,17 +32,17 @@ builder.Services.AddTransient<IMailService, LocalMailService>();
 builder.Services.AddTransient<IMailService, CloudMailService>();
 #endif
 
-builder.Services.AddDbContext<CityInfoContext>(dbContextOptions => 
-    dbContextOptions.UseSqlite(
-        builder.Configuration["ConnectionStrings:CityInfoDBConnectionString"]
-            ?? throw new InvalidOperationException()));
+builder.Services.AddDbContext<CityInfoContext>(dbContextOptions =>
+	dbContextOptions.UseSqlite(
+		builder.Configuration["ConnectionStrings:CityInfoDBConnectionString"]
+			?? throw new InvalidOperationException()));
 
 builder.Services.AddScoped<ICityInfoRepository, CityInfoRepository>();
 
 builder.Services.AddScoped<IPointOfInterestService, PointOfInterestService>();
 
-builder.Services.AddAutoMapper(config => { }, 
-    AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddAutoMapper(config => { },
+	AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
@@ -46,7 +55,7 @@ if (!app.Environment.IsDevelopment())
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+	app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
