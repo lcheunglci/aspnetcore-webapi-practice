@@ -11,7 +11,9 @@ builder.Logging.AddConsole();
 builder.Services.AddControllers()
     .AddXmlDataContractSerializerFormatters();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi(); 
+builder.Services.AddOpenApi();
+
+builder.Services.AddProblemDetails();
 
 builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
 
@@ -34,6 +36,12 @@ builder.Services.AddAutoMapper(config => { },
     AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
+
+if (!app.Environment.IsDevelopment())
+{
+	app.UseExceptionHandler();
+}
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -19,25 +19,25 @@ public class PointsOfInterestController(
 	public async Task<ActionResult<IEnumerable<PointOfInterestDto>>> GetPointsOfInterest(int cityId,
 		CancellationToken cancellationToken = default)
 	{
-		try
+		//try
+		//{
+		// throw new Exception("Exception sample");
+		logger.LogInformation("Getting points of interest for city with id {cityId}.", cityId);
+		if (!await cityInfoRepository.CityExistsAsync(cityId, cancellationToken))
 		{
-			// throw new Exception("Exception sample");
-			logger.LogInformation("Getting points of interest for city with id {cityId}.", cityId);
-			if (!await cityInfoRepository.CityExistsAsync(cityId, cancellationToken))
-			{
-				return NotFound();
-			}
-
-			var pointsOfInterestForCity = await cityInfoRepository
-				.GetPointsOfInterestForCityAsync(cityId, cancellationToken);
-
-			return Ok(mapper.Map<IEnumerable<PointOfInterestDto>>(pointsOfInterestForCity));
+			return NotFound();
 		}
-		catch (Exception ex)
-		{
-			logger.LogCritical(ex, "Exception while getting the points of interest for city with id {cityId}", cityId);
-			return StatusCode(500, "A problem happened while handling your request");
-		}
+
+		var pointsOfInterestForCity = await cityInfoRepository
+			.GetPointsOfInterestForCityAsync(cityId, cancellationToken);
+
+		return Ok(mapper.Map<IEnumerable<PointOfInterestDto>>(pointsOfInterestForCity));
+	}
+		//catch (Exception ex)
+		//{
+		//	logger.LogCritical(ex, "Exception while getting the points of interest for city with id {cityId}", cityId);
+		//	return StatusCode(500, "A problem happened while handling your request");
+		//}
 
 	}
 
