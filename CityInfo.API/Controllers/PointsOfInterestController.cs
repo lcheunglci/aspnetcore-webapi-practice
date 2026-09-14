@@ -22,6 +22,9 @@ public class PointsOfInterestController(
 		//try
 		//{
 		// throw new Exception("Exception sample");
+
+		var cityName = User.Claims.FirstOrDefault(c => c.Type == "city")?.Value;
+
 		logger.LogInformation("Getting points of interest for city with id {cityId}.", cityId);
 		if (!await cityInfoRepository.CityExistsAsync(cityId, cancellationToken))
 		{
