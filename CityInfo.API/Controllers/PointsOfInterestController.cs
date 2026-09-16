@@ -9,7 +9,7 @@ namespace CityInfo.API.Controllers;
 
 [Route("api/cities/{cityId}/pointsofinterest")]
 [ApiController]
-[Authorize("MustBeFromAntwerp")]
+//[Authorize("MustBeFromAntwerp")]
 public class PointsOfInterestController(
 	ILogger<PointsOfInterestController> logger,
 	IMailService mailService,
