@@ -9,7 +9,7 @@ using System.Text.Json;
 namespace CityInfo.API.Controllers;
 
 [ApiController]
-[Route("api/cities")]
+[Route("api/v{version:apiVersion}/cities")]
 [ApiVersion(1)]
 [ApiVersion(2)]
 //[Authorize]
