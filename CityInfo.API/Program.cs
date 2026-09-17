@@ -22,6 +22,13 @@ builder.Host.UseSerilog();
 builder.Services.AddControllers()
 	.AddXmlDataContractSerializerFormatters();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
+var apiVersions = new[] { "v1", "v2" };
+foreach (var apiVersion in apiVersions)
+{
+	builder.Services.AddOpenApi(apiVersion);
+}
+
 builder.Services.AddOpenApi();
 
 builder.Services.AddProblemDetails();
@@ -73,7 +80,12 @@ builder.Services.AddApiVersioning(setupAction =>
 	setupAction.ReportApiVersions = true;
 	setupAction.AssumeDefaultVersionWhenUnspecified = true;
 	setupAction.DefaultApiVersion = new ApiVersion(1, 0);
-}).AddMvc();
+}).AddMvc()
+.AddApiExplorer(setupAction =>
+{
+	setupAction.SubstituteApiVersionInUrl = true;
+	setupAction.GroupNameFormat = "'v'V";
+});
 
 var app = builder.Build();
 
@@ -82,11 +94,10 @@ if (!app.Environment.IsDevelopment())
 	app.UseExceptionHandler();
 }
 
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-	app.MapOpenApi();
+	app.MapOpenApi("/openapi/{documentName}.json");
 }
 
 app.UseHttpsRedirection();
