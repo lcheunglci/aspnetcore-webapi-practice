@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 
@@ -6,63 +6,64 @@ namespace CityInfo.API.Controllers;
 
 [Route("api/files")]
 [ApiController]
-public class FilesController(FileExtensionContentTypeProvider fileExtensionContentTypeProvider) 
-    : ControllerBase
+public class FilesController(FileExtensionContentTypeProvider fileExtensionContentTypeProvider)
+	: ControllerBase
 {
-    // async = modifier
-    // await = operator
+	// async = modifier
+	// await = operator
 
-    [HttpGet("{fileId}")]
-    public async Task<ActionResult> GetFile(string fileId,
-        CancellationToken cancellationToken = default)
-    {
-        // look up the actual file, depending on the fileId...
-        // demo code
-        var pathToFile = "sample-file.pdf";
+	[HttpGet("{fileId}")]
+	[ApiVersion(0.1, Deprecated = true)]
+	public async Task<ActionResult> GetFile(string fileId,
+		CancellationToken cancellationToken = default)
+	{
+		// look up the actual file, depending on the fileId...
+		// demo code
+		var pathToFile = "sample-file.pdf";
 
-        // check whether the file exists
-        if (!System.IO.File.Exists(pathToFile))
-        {
-            return NotFound();
-        }
+		// check whether the file exists
+		if (!System.IO.File.Exists(pathToFile))
+		{
+			return NotFound();
+		}
 
-        if (!fileExtensionContentTypeProvider.TryGetContentType(pathToFile, 
-            out var contentType))
-        {
-            contentType = "application/octet-stream";
-        }
+		if (!fileExtensionContentTypeProvider.TryGetContentType(pathToFile,
+			out var contentType))
+		{
+			contentType = "application/octet-stream";
+		}
 
-        var bytes = await System.IO.File.ReadAllBytesAsync(pathToFile, 
-            cancellationToken);
+		var bytes = await System.IO.File.ReadAllBytesAsync(pathToFile,
+			cancellationToken);
 
-        return File(bytes, 
-            contentType, 
-            Path.GetFileName(pathToFile));
-    }
+		return File(bytes,
+			contentType,
+			Path.GetFileName(pathToFile));
+	}
 
-    [HttpPost]
-    public async Task<ActionResult> CreateFile(IFormFile file,
-        CancellationToken cancellationToken = default)
-    {
-        // Validate the input. Put a limit on filesize to avoid large uploads attacks.
-        // Only accept .pdf files (check content-type)
-        if (file.Length is 0 
-            || file.Length > 20971520 
-            || file.ContentType != "application/pdf")
-        {
-            return BadRequest("No file or an invalid one has been inputted.");
-        }
+	[HttpPost]
+	public async Task<ActionResult> CreateFile(IFormFile file,
+		CancellationToken cancellationToken = default)
+	{
+		// Validate the input. Put a limit on filesize to avoid large uploads attacks.
+		// Only accept .pdf files (check content-type)
+		if (file.Length is 0
+			|| file.Length > 20971520
+			|| file.ContentType != "application/pdf")
+		{
+			return BadRequest("No file or an invalid one has been inputted.");
+		}
 
-        // Create the file path. Avoid using file.FileName, as an attacker can provide a
-        // malicious one, including full paths or relative paths.
-        var path = Path.Combine(
-            Directory.GetCurrentDirectory(),
-            $"uploaded_file_{Guid.NewGuid()}.pdf");
+		// Create the file path. Avoid using file.FileName, as an attacker can provide a
+		// malicious one, including full paths or relative paths.
+		var path = Path.Combine(
+			Directory.GetCurrentDirectory(),
+			$"uploaded_file_{Guid.NewGuid()}.pdf");
 
-        await using var stream = new FileStream(path, FileMode.Create);
-        await file.CopyToAsync(stream, 
-            cancellationToken);
+		await using var stream = new FileStream(path, FileMode.Create);
+		await file.CopyToAsync(stream,
+			cancellationToken);
 
-        return Ok("Your file has been uploaded successfully.");
-    }
+		return Ok("Your file has been uploaded successfully.");
+	}
 }
