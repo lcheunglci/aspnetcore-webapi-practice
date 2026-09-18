@@ -4,6 +4,7 @@ using CityInfo.API.Services;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Scalar.AspNetCore;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -98,6 +99,14 @@ if (!app.Environment.IsDevelopment())
 if (app.Environment.IsDevelopment())
 {
 	app.MapOpenApi("/openapi/{documentName}.json");
+	app.MapScalarApiReference(options =>
+	{
+		options.WithTitle("City Info API")
+			.WithTheme(ScalarTheme.Solarized)
+			.WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient)
+			.AddPreferredSecuritySchemes("Bearer");
+
+	});
 }
 
 app.UseHttpsRedirection();
