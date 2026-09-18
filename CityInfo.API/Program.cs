@@ -24,11 +24,14 @@ builder.Services.AddControllers()
 	.AddXmlDataContractSerializerFormatters();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
-var apiVersions = new[] { "v1", "v2" };
-foreach (var apiVersion in apiVersions)
-{
-	builder.Services.AddOpenApi(apiVersion);
-}
+//var apiVersions = new[] { "v1", "v2" };
+//foreach (var apiVersion in apiVersions)
+//{
+//	builder.Services.AddOpenApi(apiVersion);
+//}
+
+builder.Services.AddOpenApi("v1");
+builder.Services.AddOpenApi("v2");
 
 builder.Services.AddOpenApi();
 
