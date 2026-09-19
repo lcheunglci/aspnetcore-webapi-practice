@@ -53,7 +53,10 @@ public class CitiesController(ICityInfoRepository cityInfoRepository,
 	/// <param name="cancellationToken">The injected cancellation token</param>
 	/// <returns>A city with or without points of interest</returns>
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetCity(int id, 
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	public async Task<IActionResult> GetCity(int id, 
         bool includePointsOfInterest = false,
         CancellationToken cancellationToken = default)
     {
