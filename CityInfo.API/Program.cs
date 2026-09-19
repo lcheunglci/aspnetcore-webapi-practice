@@ -30,8 +30,35 @@ builder.Services.AddControllers()
 //	builder.Services.AddOpenApi(apiVersion);
 //}
 
-builder.Services.AddOpenApi("v1");
-builder.Services.AddOpenApi("v2");
+builder.Services.AddOpenApi("v1", options =>
+{
+	options.AddDocumentTransformer((document, context, cancellationToken) =>
+	{
+		document.Info = new()
+		{
+			Title = "City Info API",
+			Version = context.DocumentName,
+			Description = "Through this API you can access cities and their points of interest.",
+		};
+
+		return Task.CompletedTask;
+	});
+});
+builder.Services.AddOpenApi("v2", options =>
+{
+	options.AddDocumentTransformer((document, context, cancellationToken) =>
+	{
+		document.Info = new()
+		{
+			Title = "City Info API",
+			Version = context.DocumentName,
+			Description = "Through this API you can access cities and their points of interest.",
+		};
+
+		return Task.CompletedTask;
+	});
+});
+// builder.Services.AddOpenApi("v2");
 
 builder.Services.AddOpenApi();
 
