@@ -4,6 +4,7 @@ using CityInfo.API.Services;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -40,6 +41,28 @@ builder.Services.AddOpenApi("v1", options =>
 			Version = context.DocumentName,
 			Description = "Through this API you can access cities and their points of interest.",
 		};
+
+		document.Components ??= new OpenApiComponents();
+		document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
+
+		// Add Bearer token security scheme
+		document.Components.SecuritySchemes.Add("Bearer", new OpenApiSecurityScheme
+		{
+			Type = SecuritySchemeType.Http,
+			Scheme = "bearer",
+			BearerFormat = "JWT",
+			Description = "Input your Bearer token to access this API"
+		});
+
+		// Apply Security requirement globally
+		document.Security = [
+			new OpenApiSecurityRequirement
+			{
+				{
+					new OpenApiSecuritySchemeReference("Bearer"),[]
+				}
+			}
+		];
 
 		return Task.CompletedTask;
 	});
