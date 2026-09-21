@@ -46,21 +46,21 @@ public class CitiesController(ICityInfoRepository cityInfoRepository,
     }
 
 	/// <summary>
-	/// Get a city by id
+	/// Get a city by cityId
 	/// </summary>
-	/// <param name="id">The id of the city to get</param>
+	/// <param name="cityId">The cityId of the city to get</param>
 	/// <param name="includePointsOfInterest">Whether or not to include the points of interest</param>
 	/// <param name="cancellationToken">The injected cancellation token</param>
 	/// <returns>A city with or without points of interest</returns>
-    [HttpGet("{id}")]
+    [HttpGet("{cityId}")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
-	public async Task<IActionResult> GetCity(int id, 
+	public async Task<IActionResult> GetCity(int cityId, 
         bool includePointsOfInterest = false,
         CancellationToken cancellationToken = default)
     {
-        var city = await cityInfoRepository.GetCityAsync(id, 
+        var city = await cityInfoRepository.GetCityAsync(cityId, 
             includePointsOfInterest, 
             cancellationToken);
 

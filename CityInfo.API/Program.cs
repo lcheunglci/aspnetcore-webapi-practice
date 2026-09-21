@@ -33,6 +33,7 @@ builder.Services.AddControllers()
 
 builder.Services.AddOpenApi("v1", options =>
 {
+	options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0;
 	options.AddDocumentTransformer((document, context, cancellationToken) =>
 	{
 		document.Info = new()
@@ -69,6 +70,7 @@ builder.Services.AddOpenApi("v1", options =>
 });
 builder.Services.AddOpenApi("v2", options =>
 {
+	options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0;
 	options.AddDocumentTransformer((document, context, cancellationToken) =>
 	{
 		document.Info = new()
