@@ -1,0 +1,10 @@
+﻿@CityInfo.API_HostAddress = https://localhost:7164
+
+POST {{CityInfo.API_HostAddress}}/api/authentication/authenticate
+Content-Type: application/json
+
+{
+  //AuthenticationRequestDto
+}
+
+###
