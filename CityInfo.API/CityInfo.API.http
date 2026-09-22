@@ -1,13 +1,14 @@
-@baseUrl = https://localhost:7164
+#@baseUrl = https://localhost:7164
 @cityId = 1
 @pointOfInterestId = 1
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZ2l2ZW5fbmFtZSI6IktldmluIiwiZmFtaWx5X25hbWUiOiJEb2NreCIsImNpdHkiOiJBbnR3ZXJwIiwibmJmIjoxNzY4NTcwODY5LCJleHAiOjE3Njg1NzQ0NjksImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjcxNjkiLCJhdWQiOiJjaXR5aW5mb2FwaSJ9.h2r_QiK8oCnxtb_gXAGsvqyof0G0nrloo9i81BhtJCc
+@token = {{tokenRequest.response.body.$.token}}
 
 ###
 ### Authentication Endpoints
 ###
 
 ### Authenticate and get JWT token
+# @name tokenRequest
 POST {{baseUrl}}/api/authentication/authenticate
 Content-Type: application/json
 
