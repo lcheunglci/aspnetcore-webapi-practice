@@ -1,6 +1,7 @@
 ﻿using Asp.Versioning;
 using CityInfo.API.DbContexts;
 using CityInfo.API.Services;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -143,12 +144,20 @@ builder.Services.AddApiVersioning(setupAction =>
 	setupAction.GroupNameFormat = "'v'V";
 });
 
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+	options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+
+});
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
 	app.UseExceptionHandler();
 }
+
+app.UseForwardedHeaders();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
